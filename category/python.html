@@ -1,3 +1,10 @@
+<meta property="og:title" content="Random stuff" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="" />
+<meta name="twitter:url" content="" />
+<meta itemprop="name" content="Random stuff">
+<meta itemprop="url" content="">
+
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html lang="en" class="no-js lt-ie9 lt-ie8 lt-ie7" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/Blog"> <![endif]-->
 <!--[if IE 7]>         <html lang="en" class="no-js lt-ie9 lt-ie8" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/Blog"> <![endif]-->
@@ -6,7 +13,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Random stuff - Authors</title>
+<title>Python</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <link rel="shortcut icon" href="/" type="">
@@ -55,10 +62,30 @@
 
     <div class="uk-grid" data-uk-grid-margin>
 
-    <h1>Authors on Random stuff</h1>
-    <ul>
-        <li><a href="/author/pawel-mateja.html">Paweł Mateja</a> (2)</li>
-    </ul>
+<div class="uk-width-medium-4-5">
+
+
+            <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/slug.html" class="uk-article-title uk-link-muted" itemprop="name">Python snippet for making slug</a>
+                <p class="uk-article-meta"><time datetime="2020-07-09" itemprop="datePublished">czw 09 lipca 2020</time> • <a href="/category/python.html">Python</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Just a tiny snippet for future use</p>
+                <section itemprop="articleBody"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unicodedata</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+
+<span class="k">def</span> <span class="nf">slug</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
+    <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">separator</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;ł&quot;</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">)</span>
+    <span class="n">nfkd_form</span> <span class="o">=</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s1">&#39;NFKD&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nfkd_form</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">combining</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="o">+</span><span class="n">separator</span><span class="p">])</span>
+</pre></div></section>
+                <a href="/slug.html#disqus_thread"></a>
+                <hr class="uk-article-divider">
+            </article>
+
+
+</div>
 
         <div class="uk-width-medium-1-5 uk-hidden-small">
 
@@ -72,7 +99,7 @@
                 <ul class="uk-nav uk-nav-side">
                     <li class="uk-nav-header">Categories</li>
                     <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
-                    <li ><a href="/category/python.html">Python</a></li>
+                    <li class="uk-active"><a href="/category/python.html">Python</a></li>
                     <li class="uk-nav-header">Pages</li>
 
 
@@ -136,7 +163,7 @@
         <ul class="uk-nav uk-nav-offcanvas" data-uk-nav>
             <li class="uk-nav-header">Categories</li>
             <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
-            <li ><a href="/category/python.html">Python</a></li>
+            <li class="uk-active"><a href="/category/python.html">Python</a></li>
             <li class="uk-nav-header">Pages</li>
 
 
