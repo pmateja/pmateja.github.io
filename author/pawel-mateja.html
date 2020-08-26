@@ -59,23 +59,29 @@
 
 
             <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/php-in-docker-snippet.html" class="uk-article-title uk-link-muted" itemprop="name">Fastest way to run PHP site on Docker</a>
+                <p class="uk-article-meta"><time datetime="2020-08-26" itemprop="datePublished">śro 26 sierpnia 2020</time> • <a href="/category/snippets.html">Snippets</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Just a tiny snippet for future use</p>
+                <section itemprop="articleBody"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80  -v <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>:/var/www/html php:7.2-apache
+</pre></div>
+
+
+<p>Yup, thats all. I just wanted to have this for fast future use</p></section>
+                <a href="/php-in-docker-snippet.html#disqus_thread"></a>
+                <hr class="uk-article-divider">
+            </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
                 <a href="/slug.html" class="uk-article-title uk-link-muted" itemprop="name">Python snippet for making slugs</a>
                 <p class="uk-article-meta"><time datetime="2020-07-09" itemprop="datePublished">czw 09 lipca 2020</time> • <a href="/category/python.html">Python</a></p>
 </p>
                 <p class="uk-article-lead" itemprop="description">Just a tiny snippet for future use</p>
-                <section itemprop="articleBody"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unicodedata</span>
-<span class="kn">import</span> <span class="nn">string</span>
-
-
-<span class="k">def</span> <span class="nf">slug</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">separator</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;ł&quot;</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">)</span>
-    <span class="n">nfkd_form</span> <span class="o">=</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s1">&#39;NFKD&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nfkd_form</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">combining</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-                    <span class="ow">and</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="o">+</span><span class="n">separator</span><span class="p">])</span>
-</pre></div></section>
-                <a href="/slug.html#disqus_thread"></a>
+                <p>import unicodedata import string def slug(text, separator="-"): text = text.lower().replace(" ", separator).replace("ł", "l") nfkd_form = unicodedata.normalize('NFKD', text) return "".join([<span...</p>
+                <a href="/slug.html">Read More</a>
                 <hr class="uk-article-divider">
-            </article>
+        </article>
 
 
         <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
@@ -104,6 +110,7 @@
                     <li class="uk-nav-header">Categories</li>
                     <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
                     <li ><a href="/category/python.html">Python</a></li>
+                    <li ><a href="/category/snippets.html">Snippets</a></li>
                     <li class="uk-nav-header">Pages</li>
 
 
@@ -168,6 +175,7 @@
             <li class="uk-nav-header">Categories</li>
             <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
             <li ><a href="/category/python.html">Python</a></li>
+            <li ><a href="/category/snippets.html">Snippets</a></li>
             <li class="uk-nav-header">Pages</li>
 
 

