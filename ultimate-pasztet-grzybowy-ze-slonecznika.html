@@ -6,9 +6,9 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Python snippet for making slugs</title>
+<title>Ultimate pasztet grzybowy ze słonecznika</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Just a tiny snippet for future use">
+<meta name="description" content="Chciałem zacząć ten wpis od akapitu o karmieniu pasztetem papieża, ale za kilka dni święta, więc sobie daruję, bo szkoda pominąć istotniejszy, choć mniej śmieszny kontekst. Rzecz jest prosta: grzybowy pasztet ze słonecznika to jest ultimate paszetet, taki który możecie wrzucić do święconego koszyczka na wielkanoc i który będzie wchodził …">
 <link rel="shortcut icon" href="/" type="">
 <meta name="author" content="Pawel Mateja">
 <meta name="copyright" content="Pawel Mateja">
@@ -16,17 +16,16 @@
 <meta name="twitter:site" content="@" />
 <meta property="og:site_name" content="Random stuff" />
 
-<meta property="og:title" content="Python snippet for making slugs" />
+<meta property="og:title" content="Ultimate pasztet grzybowy ze słonecznika" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/slug.html" />
-<meta name="twitter:title" content="Python snippet for making slugs" />
-<meta name="twitter:url" content="/slug.html" />
-<meta itemprop="url" content="/slug.html" />
-<meta property="og:description" content="Just a tiny snippet for future use" />
-<meta name="twitter:description" content="Just a tiny snippet for future use" />
-<meta property="og:article:published_time" content="2020-07-09" />
-<meta property="og:article:author" content="Paweł Mateja" >
-<meta property="og:article:tag" content="python">
+<meta property="og:url" content="/ultimate-pasztet-grzybowy-ze-slonecznika.html" />
+<meta name="twitter:title" content="Ultimate pasztet grzybowy ze słonecznika" />
+<meta name="twitter:url" content="/ultimate-pasztet-grzybowy-ze-slonecznika.html" />
+<meta itemprop="url" content="/ultimate-pasztet-grzybowy-ze-slonecznika.html" />
+<meta property="og:description" content="Chciałem zacząć ten wpis od akapitu o karmieniu pasztetem papieża, ale za kilka dni święta, więc sobie daruję, bo szkoda pominąć istotniejszy, choć mniej śmieszny kontekst. Rzecz jest prosta: grzybowy pasztet ze słonecznika to jest ultimate paszetet, taki który możecie wrzucić do święconego koszyczka na wielkanoc i który będzie wchodził …" />
+<meta name="twitter:description" content="Chciałem zacząć ten wpis od akapitu o karmieniu pasztetem papieża, ale za kilka dni święta, więc sobie daruję, bo szkoda pominąć istotniejszy, choć mniej śmieszny kontekst. Rzecz jest prosta: grzybowy pasztet ze słonecznika to jest ultimate paszetet, taki który możecie wrzucić do święconego koszyczka na wielkanoc i który będzie wchodził …" />
+<meta property="og:article:published_time" content="2018-10-07" />
+<meta property="og:article:author" content="Pawel Mateja" >
 
 <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Random stuff ATOM Feed"/>
 <link href='//fonts.googleapis.com/css?family=Open+Sans:800italic' rel='stylesheet' type='text/css'>
@@ -70,21 +69,41 @@
 <div class="uk-width-medium-7-10">
 
     <article class="uk-article">
-        <h1 class="uk-heading-large uk-article-title" itemprop="name">Python snippet for making slugs</h1>
-        <p class="uk-article-meta"><time datetime="2020-07-09" itemprop="datePublished">czw 09 lipca 2020</time> in <a href="/category/python.html">Python</a></p>
+        <h1 class="uk-heading-large uk-article-title" itemprop="name">Ultimate pasztet grzybowy ze słonecznika</h1>
+        <p class="uk-article-meta"><time datetime="2018-10-07" itemprop="datePublished">nie 07 października 2018</time> in <a href="/category/food-pl.html">Food [PL]</a></p>
 
 
-        <p class="uk-article-lead" itemprop="description">Just a tiny snippet for future use</p>
-        <section itemprop="articleBody"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unicodedata</span>
-<span class="kn">import</span> <span class="nn">string</span>
-
-
-<span class="k">def</span> <span class="nf">slug</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">separator</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;ł&quot;</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">)</span>
-    <span class="n">nfkd_form</span> <span class="o">=</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s1">&#39;NFKD&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nfkd_form</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">combining</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-                    <span class="ow">and</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="o">+</span><span class="n">separator</span><span class="p">])</span>
-</pre></div></section>
+        <p class="uk-article-lead" itemprop="description">Chciałem zacząć ten wpis od akapitu o karmieniu pasztetem papieża, ale za kilka dni święta, więc sobie daruję, bo szkoda pominąć istotniejszy, choć mniej śmieszny kontekst. Rzecz jest prosta: grzybowy pasztet ze słonecznika to jest ultimate paszetet, taki który możecie wrzucić do święconego koszyczka na wielkanoc i który będzie wchodził …</p>
+        <section itemprop="articleBody"><p>Chciałem zacząć ten wpis od akapitu o karmieniu pasztetem papieża, ale za kilka dni święta, więc sobie daruję, bo szkoda pominąć istotniejszy, choć mniej śmieszny kontekst. Rzecz jest prosta: grzybowy pasztet ze słonecznika to jest ultimate paszetet, taki który możecie wrzucić do święconego koszyczka na wielkanoc i który będzie wchodził w Boże narodzenie jak złoto. Niekoniecznie w czasie wieczerzy, bo to smarowidło do chleba, ale jako zerowanie kubków smakowych po słodkim albo na śniadanie to po prostu bajka. W następnych dwóch akapitach będę obrażał pasztet z mięsa, przy okazji tłumacząc dlaczego mój jest lepszy. Możecie wykorzystać te argumenty w dyskusji przy wigilijnym stole. </p>
+<p>Mamy tu do czynienia z ideałem. Nie z jakimś pasztetem ze świni ujebanej gównem, tylko eleganckim wyrobem z dojrzewających w polskim słońcu nasion słonecznika, symbolu szczęścia i miłości, z aromatycznej cebuli, symbolu kuchni nie tylko polskej, ale też francuskiej oraz z najszlachetniejszych grzybów ze śląskich lasów: borowików albo podgrzybków, które śmiało można nazwać jedną z największych tajemnic kuchni europejskiej, skarbu dziczy o rozlicznych wartościach odżyczych, których bogactwa do tej pory nie pojęto w całości. Powtarzam, żeby było to jasne, w tym papieskim pasztecie żaden ze składników nie ma odbytu ani szczeciny, nie ma tu -- przepraszam za dosadność -- smaku chlewa i gówna.</p>
+<p>Co więcej, poza brakiem wspomaniego aromatu świni albo kury, który -- umówmy się -- nie jest wartością dodaną, nie brak mu niczego. Jest tłusty, ma białeczko, umami, wędzony aromat i odpowiednią smarowność. Po przejściu na wegetarianizm początkowo bardzo mi właśnie pasztetu, zwłaszcza że wszelkie pasty ze strączków, nawet te najsmaczniejsze, dawały rezultat znacząco inny od tego, który mogłem kupić w mięsnym za 20zł/kg. Dopiero ten przepis sprawił, że z pełną pogardą mogę patrzeć na mieloną świnię. Słowo daję, możecie podsunąć kanapkę z nim nie tylko głowie Kościoła, gdyby akurat was odwiedziła, ale też znajomym przy wódeczce, pewnie nawet nie zauważą różnicy, tylko powiedzą, że dobre i że chcą jeszcze. Tak będzie, nie zmyślam.</p>
+<h2>Przepis</h2>
+<h3>Składniki</h3>
+<ul>
+<li>Grzyby. Najlepiej leśne: borowiki, podgrzybki, maślaki, ale boczniaki też się świetnie nadadzą, pieczarki też. Ile? Ile chcecie, ze dwie-trzy garście pokrojonych w moim przypadku</li>
+<li>Cebula, jedna duża, można dorzucić ekstra szalotkę</li>
+<li>Kawałek pora, tak z 5cm</li>
+<li>Ziele angielskie, 2 sztuki</li>
+<li>Jałowiec, 2 sztuki</li>
+<li>Słonecznik łuskany, ok 1 szklanki</li>
+<li>Sos sojowy</li>
+<li>Sól</li>
+<li>Pieprz</li>
+<li>Majeranek</li>
+<li>Cząber</li>
+<li>Lubczyk</li>
+<li>Wędzona papryka</li>
+</ul>
+<h3>How To</h3>
+<p>Smażymy na oleju grzyby, cebulę i pora wraz z jałowcem i zielem angielski. </p>
+<p><img alt="Surowe rzeczy na patelni, zdjęcie poglądowe" src="/images/2-pasztet/pasztet1.jpg">
+Surowe rzeczy na patelni, zdjęcie poglądowe</p>
+<p>Niech to trochę potrwa, żeby grzyby nie były surowe, nie chcę, żebyście przeze mnie umarli. Wyciągamy zielę i jałowiec, nie chcemy tego zblendować, bo zepsują smak. Następnie dodajemy na chwilkę na patelnię słonecznik, po nim przyprawy w stosownej ilości (nie będę podawał, szanujmy się, każdy ma swój smak). Przekładamy całość do blendera i blendujemy na umiarkowanie gładką masę. Dodatek sosu sojowego to protip, bo łatwiej będzie zmielić całość i przy okazji ma sporo glutaminianu, więc fajnie.</p>
+<p><img alt="Post-surowe rzeczy na patelni, zdjęcie poglądowe" src="/images/2-pasztet/pasztet2.jpg">
+Post-surowe rzeczy na patelni, zdjęcie poglądowe</p>
+<p>Gotowy produkt wytrzymuje w lodówce lekko tydzień. Dodatek musztardy, keczupu i kiszonego ogóra to oczywistość, najlepiej wszystko na raz.</p>
+<p><img alt="Foodporn, zdjęcie poglądowe" src="/images/2-pasztet/pasztet3.jpg">
+Foodporn, zdjęcie poglądowe</p></section>
         <hr class="uk-article-divider">
     </article>
 
@@ -102,9 +121,9 @@
             <div class="uk-panel uk-panel-box">
                 <ul class="uk-nav uk-nav-side">
                     <li class="uk-nav-header">Categories</li>
-                    <li ><a href="/category/food-pl.html">Food [PL]</a></li>
+                    <li class="uk-active"><a href="/category/food-pl.html">Food [PL]</a></li>
                     <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
-                    <li class="uk-active"><a href="/category/python.html">Python</a></li>
+                    <li ><a href="/category/python.html">Python</a></li>
                     <li ><a href="/category/snippets.html">Snippets</a></li>
                     <li class="uk-nav-header">Pages</li>
 
@@ -172,9 +191,9 @@
 
         <ul class="uk-nav uk-nav-offcanvas" data-uk-nav>
             <li class="uk-nav-header">Categories</li>
-            <li ><a href="/category/food-pl.html">Food [PL]</a></li>
+            <li class="uk-active"><a href="/category/food-pl.html">Food [PL]</a></li>
             <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
-            <li class="uk-active"><a href="/category/python.html">Python</a></li>
+            <li ><a href="/category/python.html">Python</a></li>
             <li ><a href="/category/snippets.html">Snippets</a></li>
             <li class="uk-nav-header">Pages</li>
 
