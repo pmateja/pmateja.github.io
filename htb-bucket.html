@@ -1,26 +1,36 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html lang="en" class="no-js lt-ie9 lt-ie8 lt-ie7" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/Blog"> <![endif]-->
-<!--[if IE 7]>         <html lang="en" class="no-js lt-ie9 lt-ie8" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/Blog"> <![endif]-->
-<!--[if IE 8]>         <html lang="en" class="no-js lt-ie9" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/Blog"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" class="no-js" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/Blog"> <!--<![endif]-->
+<!--[if lt IE 7]>      <html lang="en" class="no-js lt-ie9 lt-ie8 lt-ie7" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/BlogPosting"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" class="no-js lt-ie9 lt-ie8" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/BlogPosting"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" class="no-js lt-ie9" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/BlogPosting"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" class="no-js" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/BlogPosting"> <!--<![endif]-->
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Random stuff - htb tag</title>
+<title>HTB: Bucket</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="">
+<meta name="description" content="Solution to the Bucket VM">
 <link rel="shortcut icon" href="/" type="">
 <meta name="author" content="Pawel Mateja">
 <meta name="copyright" content="Pawel Mateja">
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta property="og:site_name" content="Random stuff" />
-<meta property="og:title" content="Random stuff" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="" />
-<meta name="twitter:url" content="" />
-<meta itemprop="name" content="Random stuff" />
-<meta itemprop="url" content=""/>
+
+<meta property="og:title" content="Htb: bucket" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/htb-bucket.html" />
+<meta name="twitter:title" content="Htb: bucket" />
+<meta name="twitter:url" content="/htb-bucket.html" />
+<meta itemprop="url" content="/htb-bucket.html" />
+<meta property="og:description" content="Solution to the Bucket VM" />
+<meta name="twitter:description" content="Solution to the Bucket VM" />
+<meta property="og:article:published_time" content="2021-06-27" />
+<meta property="og:article:author" content="Paweł Mateja" >
+<meta property="og:article:tag" content="hackthebox">
+<meta property="og:article:tag" content="htb">
+<meta property="og:article:tag" content="solution">
+<meta property="og:article:tag" content="hacking">
+
 <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Random stuff ATOM Feed"/>
 <link href='//fonts.googleapis.com/css?family=Open+Sans:800italic' rel='stylesheet' type='text/css'>
 <link href='//fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
@@ -55,15 +65,20 @@
 
     <div class="uk-grid" data-uk-grid-margin>
 
-<div class="uk-width-medium-4-5">
+<div class="mg-container-social uk-width-medium-1-10 uk-hidden-small">
 
 
-            <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
-                <a href="/htb-bucket.html" class="uk-article-title uk-link-muted" itemprop="name">HTB: Bucket</a>
-                <p class="uk-article-meta"><time datetime="2021-06-27" itemprop="datePublished">nie 27 czerwca 2021</time> • <a href="/category/hackthebox.html">HackTheBox</a></p>
-</p>
-                <p class="uk-article-lead" itemprop="description">Solution to the Bucket VM</p>
-                <section itemprop="articleBody"><h1>Foothold</h1>
+</div>
+
+<div class="uk-width-medium-7-10">
+
+    <article class="uk-article">
+        <h1 class="uk-heading-large uk-article-title" itemprop="name">HTB: Bucket</h1>
+        <p class="uk-article-meta"><time datetime="2021-06-27" itemprop="datePublished">nie 27 czerwca 2021</time> in <a href="/category/hackthebox.html">HackTheBox</a></p>
+
+
+        <p class="uk-article-lead" itemprop="description">Solution to the Bucket VM</p>
+        <section itemprop="articleBody"><h1>Foothold</h1>
 <p>First, as always we scan ports with <em>nmap</em>.</p>
 <div class="highlight"><pre><span></span>nmap -sS -sV  <span class="m">10</span>.10.10.212  
 Starting Nmap <span class="m">7</span>.91 <span class="o">(</span> https://nmap.org <span class="o">)</span> at <span class="m">2021</span>-05-16 <span class="m">23</span>:27 CEST
@@ -416,20 +431,8 @@ endobj
 
 
 <p>Yay! See the root flag in the middle?</p></section>
-                <a href="/htb-bucket.html#disqus_thread"></a>
-                <hr class="uk-article-divider">
-            </article>
-
-
-        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
-                <a href="/bashed.html" class="uk-article-title uk-link-muted" itemprop="name">Bashed</a>
-                <p class="uk-article-meta"><time datetime="2020-01-13" itemprop="datePublished">pon 13 stycznia 2020</time> • <a href="/category/hackthebox.html">HackTheBox</a></p>
-</p>
-                <p class="uk-article-lead" itemprop="description">Solution to the Bashed VM</p>
-                <p>User flag It is not really necessary to start this one with nmap, but it's never a bad first step root@kali:~# nmap -sS -Pn -sV 10.10.10.68 Starting Nmap 7.70 ( https://nmap.org ) at 2020-01-13 13:20 CET Nmap scan report for 10.10.10.68 Host is up (0.11s latency). Not shown: 999 closed ports PORT STATE SERVICE VERSION 80/tcp open http Apache httpd 2.4.18 ((Ubuntu)) Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1...</p>
-                <a href="/bashed.html">Read More</a>
-                <hr class="uk-article-divider">
-        </article>
+        <hr class="uk-article-divider">
+    </article>
 
 
 </div>
@@ -446,7 +449,7 @@ endobj
                 <ul class="uk-nav uk-nav-side">
                     <li class="uk-nav-header">Categories</li>
                     <li ><a href="/category/food-pl.html">Food [PL]</a></li>
-                    <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
+                    <li class="uk-active"><a href="/category/hackthebox.html">HackTheBox</a></li>
                     <li ><a href="/category/python.html">Python</a></li>
                     <li ><a href="/category/snippets.html">Snippets</a></li>
                     <li class="uk-nav-header">Pages</li>
@@ -516,7 +519,7 @@ endobj
         <ul class="uk-nav uk-nav-offcanvas" data-uk-nav>
             <li class="uk-nav-header">Categories</li>
             <li ><a href="/category/food-pl.html">Food [PL]</a></li>
-            <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
+            <li class="uk-active"><a href="/category/hackthebox.html">HackTheBox</a></li>
             <li ><a href="/category/python.html">Python</a></li>
             <li ><a href="/category/snippets.html">Snippets</a></li>
             <li class="uk-nav-header">Pages</li>

