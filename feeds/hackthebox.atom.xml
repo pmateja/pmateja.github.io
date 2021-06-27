@@ -99,7 +99,7 @@ ID           Response   Lines    Word       Chars       Payload
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Lets take a look ah this address:&lt;/p&gt;
+&lt;p&gt;Lets take a look at this address:&lt;/p&gt;
 &lt;p&gt;&lt;img alt="DynamoDB web client screenshot" src="images/htb-bucket/htb-bucket.png"&gt;&lt;/p&gt;
 &lt;p&gt;We are definitly going somewhere. For now just note that discovery.&lt;/p&gt;
 &lt;p&gt;For now we can try last, but most important thing: use the &lt;strong&gt;aws&lt;/strong&gt; cli. It is already on your system or just install it from system repo.&lt;/p&gt;
